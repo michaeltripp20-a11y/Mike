@@ -64,7 +64,8 @@ Respond with valid JSON in this exact shape:
   const stream = client.messages.stream({
     model: "claude-opus-4-8",
     max_tokens: 4096,
-    thinking: { type: "enabled", budget_tokens: 2000 },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    thinking: { type: "adaptive" } as any,
     system: systemPrompt,
     messages: [{ role: "user", content: userPrompt }],
   });
