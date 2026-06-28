@@ -11,6 +11,83 @@ interface SubstackDraft {
   title: string;
 }
 
+// Convert simple HTML to Substack's ProseMirror JSON format
+function htmlToSubstackDoc(html: string): object {
+  const content: object[] = [];
+
+  // Split on block-level tags
+  const blockRegex = /<(h2|p|ul)([\s\S]*?)(?:<\/\1>)/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = blockRegex.exec(html)) !== null) {
+    const tag = match[1].toLowerCase();
+    const inner = match[0].replace(/<\/?[^>]+>/g, "").trim();
+
+    if (tag === "h2") {
+      content.push({
+        type: "heading",
+        attrs: { level: 2, id: null, class: null },
+        content: [{ type: "text", text: inner }],
+      });
+    } else if (tag === "p") {
+      const parsed = parseInline(match[0]);
+      if (parsed.length > 0) {
+        content.push({ type: "paragraph", content: parsed });
+      }
+    } else if (tag === "ul") {
+      const items: object[] = [];
+      const liRegex = /<li>([\s\S]*?)<\/li>/gi;
+      let li: RegExpExecArray | null;
+      while ((li = liRegex.exec(match[0])) !== null) {
+        const liContent = parseInline(li[1]);
+        items.push({
+          type: "list_item",
+          content: [{ type: "paragraph", content: liContent }],
+        });
+      }
+      if (items.length > 0) {
+        content.push({ type: "bullet_list", content: items });
+      }
+    }
+  }
+
+  if (content.length === 0) {
+    // Fallback: treat entire html as a single paragraph
+    content.push({
+      type: "paragraph",
+      content: [{ type: "text", text: html.replace(/<[^>]+>/g, "") }],
+    });
+  }
+
+  return { type: "doc", content };
+}
+
+function parseInline(html: string): object[] {
+  const nodes: object[] = [];
+  // Strip outer tag if present
+  const inner = html.replace(/^<[^>]+>|<\/[^>]+>$/g, "");
+  const strongRegex = /<strong>([\s\S]*?)<\/strong>/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+
+  while ((m = strongRegex.exec(inner)) !== null) {
+    if (m.index > last) {
+      const text = inner.slice(last, m.index).replace(/<[^>]+>/g, "");
+      if (text) nodes.push({ type: "text", text });
+    }
+    const boldText = m[1].replace(/<[^>]+>/g, "");
+    if (boldText) nodes.push({ type: "text", marks: [{ type: "strong" }], text: boldText });
+    last = m.index + m[0].length;
+  }
+
+  if (last < inner.length) {
+    const text = inner.slice(last).replace(/<[^>]+>/g, "");
+    if (text) nodes.push({ type: "text", text });
+  }
+
+  return nodes;
+}
+
 export class SubstackClient {
   private readonly baseUrl: string;
   private readonly cookie: string;
@@ -32,10 +109,12 @@ export class SubstackClient {
   }
 
   async createDraft(payload: DraftPayload): Promise<SubstackDraft> {
+    const doc = htmlToSubstackDoc(payload.body_html);
+
     const body = {
       draft_title: payload.title,
       draft_subtitle: payload.subtitle,
-      draft_body: payload.body_html,
+      draft_body: JSON.stringify(doc),
       draft_section_id: null,
       audience: "everyone",
       draft_bylines: [],
