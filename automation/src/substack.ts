@@ -38,6 +38,7 @@ export class SubstackClient {
       draft_body: payload.body_html,
       draft_section_id: null,
       audience: "everyone",
+      draft_bylines: [],
       draft_podcast_url: "",
       draft_podcast_duration: null,
       draft_podcast_preview_upload_id: null,
