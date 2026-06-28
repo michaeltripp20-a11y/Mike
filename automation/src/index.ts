@@ -38,11 +38,8 @@ async function runPost(): Promise<void> {
   }
 }
 
-// Tuesday at 9:00 AM
-cron.schedule("0 9 * * 2", runPost, { timezone: "America/New_York" });
+// Every day at 9:00 AM
+cron.schedule("0 9 * * *", runPost, { timezone: "America/New_York" });
 
-// Friday at 9:00 AM
-cron.schedule("0 9 * * 5", runPost, { timezone: "America/New_York" });
-
-console.log("Substack automation running. Posts scheduled for Tuesday and Friday at 9:00 AM ET.");
+console.log("Substack automation running. Posts scheduled daily at 9:00 AM ET.");
 console.log(`Publication: ${SUBSTACK_PUBLICATION}.substack.com`);
