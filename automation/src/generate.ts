@@ -3,26 +3,31 @@ import Anthropic from "@anthropic-ai/sdk";
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const TOPICS = [
-  "pipeline management and forecasting accuracy",
-  "sales coaching techniques that actually move the needle",
-  "how to run effective one-on-ones with reps",
-  "building a repeatable sales process",
-  "quota setting and territory design",
-  "managing underperformers without destroying morale",
-  "hiring and onboarding top sales talent",
-  "sales metrics that matter vs. vanity metrics",
-  "transitioning from individual contributor to sales manager",
-  "how to build a culture of accountability on your team",
-  "navigating deals stuck in late-stage limbo",
-  "using CRM data to coach instead of just track",
-  "handling pushback on pricing without discounting",
-  "motivating a team through a tough quarter",
-  "the difference between managing and leading a sales team",
-  "how top sales managers run their weekly forecasting calls",
-  "building a strong bench: developing future sales leaders",
-  "cross-functional alignment: sales and marketing partnership",
-  "how to retain your best reps in a competitive market",
-  "structuring comp plans that drive the right behaviors",
+  "how to lead a retail team through a slow season without losing momentum",
+  "the difference between a store manager and a store leader",
+  "how to coach associates who don't think they need coaching",
+  "building accountability on a retail floor without micromanaging",
+  "how to run a pre-shift huddle that actually energizes your team",
+  "developing your best part-timers into future leaders",
+  "handling conflict between team members on the floor",
+  "how to motivate a team when foot traffic is down",
+  "the hardest part of moving from associate to manager",
+  "setting performance expectations that stick",
+  "how great retail leaders handle a bad mystery shop",
+  "leading through turnover without burning out your core team",
+  "how to give feedback that changes behavior, not just feelings",
+  "building a culture of ownership when most of your team is hourly",
+  "the daily habits of highly effective floor leaders",
+  "how to identify and grow your next assistant manager",
+  "managing up: how to influence decisions your DM makes about your store",
+  "why your best employee might be your worst promotion",
+  "how to run a team meeting when nobody wants to be there",
+  "recovering team morale after a tough holiday season",
+  "leading a multigenerational team on the retail floor",
+  "how to stay calm and lead well during a difficult customer situation",
+  "the real reason your top performers leave — and how to keep them",
+  "how to onboard a new hire so they actually stay past 90 days",
+  "scheduling strategies that balance business needs and team loyalty",
 ];
 
 function pickTopic(usedRecently: string[]): string {
@@ -41,7 +46,7 @@ export interface GeneratedArticle {
 export async function generateArticle(usedTopics: string[] = []): Promise<GeneratedArticle> {
   const topic = pickTopic(usedTopics);
 
-  const systemPrompt = `You are an expert sales management coach and thought leader writing for The Floor Report, a Substack publication for frontline sales managers and revenue leaders. Your writing is direct, practical, and based on real-world experience. You avoid corporate buzzwords and write like you're sharing hard-won lessons with a peer. Your articles are long-form (1200–1800 words), structured with clear headers, include specific examples or frameworks, and always end with actionable takeaways. Format the article in Substack-compatible HTML using <h2> for section headers, <p> for paragraphs, <ul>/<li> for lists, and <strong> for emphasis. Do not include the title or subtitle in the body HTML.`;
+  const systemPrompt = `You are an expert retail leadership coach and thought leader writing for The Floor Report, a Substack publication for frontline retail managers and store leaders. Your writing is direct, practical, and grounded in the realities of leading hourly teams on the sales floor — scheduling pressure, high turnover, district manager expectations, and the daily grind of running a store. You write like a seasoned store manager sharing hard-won lessons with a peer. No corporate buzzwords. No B2B jargon. Your articles are long-form (1200–1800 words), structured with clear headers, include specific examples or frameworks retail leaders can use immediately, and always end with actionable takeaways. Format the article in Substack-compatible HTML using <h2> for section headers, <p> for paragraphs, <ul>/<li> for lists, and <strong> for emphasis. Do not include the title or subtitle in the body HTML.`;
 
   const userPrompt = `Write a long-form article about: "${topic}".
 
