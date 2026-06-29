@@ -211,158 +211,176 @@ export default function App() {
           />
         </div>
 
-        {/* Revenue Chart + Transactions */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <div className="xl:col-span-2 bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-white font-semibold text-lg">Revenue Over Time</h2>
-                <p className="text-gray-500 text-sm">Last 30 minutes · updates every 5s</p>
-              </div>
-              <div className="flex gap-3 text-xs text-gray-400">
-                <span className="flex items-center gap-1"><span className="w-3 h-1 bg-emerald-400 rounded inline-block"></span>Revenue</span>
-              </div>
+        {/* Revenue Chart — full-width banner */}
+        <div className="w-full bg-gray-900 border border-gray-800 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="text-white font-semibold text-xl">Revenue Over Time</h2>
+              <p className="text-gray-500 text-sm mt-0.5">Last 30 minutes · updates every 5s</p>
             </div>
-            <ResponsiveContainer width="100%" height={260}>
-              <AreaChart data={revenue} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
-                <defs>
-                  <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-                <XAxis
-                  dataKey="time"
-                  tick={{ fontSize: 11, fill: '#6b7280' }}
-                  interval={4}
-                  axisLine={{ stroke: '#374151' }}
-                  tickLine={false}
-                />
-                <YAxis
-                  tick={{ fontSize: 11, fill: '#6b7280' }}
-                  axisLine={false}
-                  tickLine={false}
-                  tickFormatter={v => `$${(v / 1000).toFixed(0)}k`}
-                  width={48}
-                />
-                <Tooltip
-                  contentStyle={{ background: '#111827', border: '1px solid #374151', borderRadius: '8px', fontSize: '13px' }}
-                  labelStyle={{ color: '#9ca3af' }}
-                  itemStyle={{ color: '#10b981' }}
-                  formatter={(v) => [fmt(Number(v)), 'Revenue']}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#10b981"
-                  strokeWidth={2}
-                  fill="url(#revGrad)"
-                  dot={false}
-                  isAnimationActive={false}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            <span className="flex items-center gap-2 text-sm text-gray-400">
+              <span className="w-4 h-1 bg-emerald-400 rounded inline-block"></span>Revenue
+            </span>
           </div>
+          <ResponsiveContainer width="100%" height={320}>
+            <AreaChart data={revenue} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
+              <defs>
+                <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+              <XAxis
+                dataKey="time"
+                tick={{ fontSize: 11, fill: '#6b7280' }}
+                interval={4}
+                axisLine={{ stroke: '#374151' }}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fontSize: 11, fill: '#6b7280' }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={v => `$${(v / 1000).toFixed(0)}k`}
+                width={52}
+              />
+              <Tooltip
+                contentStyle={{ background: '#111827', border: '1px solid #374151', borderRadius: '8px', fontSize: '13px' }}
+                labelStyle={{ color: '#9ca3af' }}
+                itemStyle={{ color: '#10b981' }}
+                formatter={(v) => [fmt(Number(v)), 'Revenue']}
+              />
+              <Area
+                type="monotone"
+                dataKey="revenue"
+                stroke="#10b981"
+                strokeWidth={2.5}
+                fill="url(#revGrad)"
+                dot={false}
+                isAnimationActive={false}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
 
-          {/* Live Transactions */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white font-semibold text-lg">Live Transactions</h2>
-              <span className="text-xs text-gray-500">updates every 3s</span>
-            </div>
-            <div className="flex-1 space-y-2 overflow-hidden">
-              {transactions.map(tx => (
-                <div key={tx.id} className="flex items-center gap-3 py-2 border-b border-gray-800 last:border-0">
-                  <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-sm font-bold text-gray-300 shrink-0">
+        {/* Live Transactions — full-width horizontal card strip */}
+        <div className="w-full bg-gray-900 border border-gray-800 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-white font-semibold text-xl">Live Transactions</h2>
+            <span className="text-xs text-gray-500">updates every 3s</span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {transactions.map(tx => (
+              <div key={tx.id} className="bg-gray-800/60 border border-gray-700/50 rounded-lg p-3 flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-200 shrink-0">
                     {tx.name[0]}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm text-white font-medium truncate">{tx.name}</div>
-                    <div className="text-xs text-gray-500 truncate">{tx.product}</div>
+                  <span className="text-sm text-white font-medium truncate">{tx.name}</span>
+                </div>
+                <div className="text-xs text-gray-400 truncate">{tx.product}</div>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-sm font-bold text-emerald-400">{fmt(tx.amount)}</span>
+                  <StatusBadge status={tx.status} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top Products — full-width banner */}
+        <div className="w-full bg-gray-900 border border-gray-800 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-white font-semibold text-xl">Top Products</h2>
+            <span className="text-xs text-gray-500">by revenue</span>
+          </div>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
+                <th className="text-left pb-3 font-medium">#</th>
+                <th className="text-left pb-3 font-medium">Product</th>
+                <th className="text-right pb-3 font-medium">Units</th>
+                <th className="text-right pb-3 font-medium">Revenue</th>
+                <th className="pb-3 w-48 pl-6">Share</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-800">
+              {products.map((p, i) => (
+                <tr key={p.name}>
+                  <td className="py-3 pr-3 text-gray-500 text-xs">{i + 1}</td>
+                  <td className="py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full inline-block shrink-0" style={{ background: p.color }}></span>
+                      <span className="text-white font-medium">{p.name}</span>
+                    </div>
+                  </td>
+                  <td className="py-3 text-right text-gray-400">{p.units.toLocaleString()}</td>
+                  <td className="py-3 text-right font-semibold" style={{ color: p.color }}>{fmt(p.revenue)}</td>
+                  <td className="py-3 pl-6">
+                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{ width: `${(p.revenue / maxRevenue) * 100}%`, background: p.color }}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Sales by Region — full-width banner */}
+        <div className="w-full bg-gray-900 border border-gray-800 rounded-xl p-6">
+          <div className="mb-5">
+            <h2 className="text-white font-semibold text-xl">Sales by Region</h2>
+            <p className="text-gray-500 text-sm mt-0.5">Revenue distribution</p>
+          </div>
+          <div className="flex flex-col lg:flex-row items-center gap-8">
+            <div className="shrink-0">
+              <ResponsiveContainer width={340} height={280}>
+                <PieChart>
+                  <Pie
+                    data={regions}
+                    cx="50%"
+                    cy="45%"
+                    innerRadius={70}
+                    outerRadius={110}
+                    paddingAngle={3}
+                    dataKey="value"
+                    isAnimationActive={false}
+                  >
+                    {regions.map(r => (
+                      <Cell key={r.name} fill={r.color} stroke="transparent" />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{ background: '#111827', border: '1px solid #374151', borderRadius: '8px', fontSize: '13px' }}
+                    formatter={(v) => [`${v}%`, 'Share']}
+                  />
+                  <Legend
+                    iconType="circle"
+                    iconSize={8}
+                    formatter={(value) => <span style={{ color: '#9ca3af', fontSize: '12px' }}>{value}</span>}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-4 w-full">
+              {regions.map(r => (
+                <div key={r.name} className="bg-gray-800/50 border border-gray-700/40 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: r.color }}></span>
+                    <span className="text-gray-300 text-sm font-medium">{r.name}</span>
                   </div>
-                  <div className="text-right shrink-0">
-                    <div className="text-sm font-semibold text-emerald-400">{fmt(tx.amount)}</div>
-                    <StatusBadge status={tx.status} />
+                  <div className="text-2xl font-bold" style={{ color: r.color }}>{r.value}%</div>
+                  <div className="mt-2 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${r.value}%`, background: r.color }} />
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* Products + Region */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          {/* Top Products */}
-          <div className="xl:col-span-2 bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white font-semibold text-lg">Top Products</h2>
-              <span className="text-xs text-gray-500">by revenue</span>
-            </div>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-gray-500 text-xs uppercase tracking-wider">
-                  <th className="text-left pb-3 font-medium">Product</th>
-                  <th className="text-right pb-3 font-medium">Units</th>
-                  <th className="text-right pb-3 font-medium">Revenue</th>
-                  <th className="pb-3 w-32"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-800">
-                {products.map((p, i) => (
-                  <tr key={p.name}>
-                    <td className="py-3 flex items-center gap-2">
-                      <span className="text-gray-500 text-xs w-4">{i + 1}</span>
-                      <span className="w-2 h-2 rounded-full inline-block shrink-0" style={{ background: p.color }}></span>
-                      <span className="text-white font-medium">{p.name}</span>
-                    </td>
-                    <td className="py-3 text-right text-gray-400">{p.units.toLocaleString()}</td>
-                    <td className="py-3 text-right font-semibold" style={{ color: p.color }}>{fmt(p.revenue)}</td>
-                    <td className="py-3 pl-4">
-                      <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{ width: `${(p.revenue / maxRevenue) * 100}%`, background: p.color }}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Region Pie */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <h2 className="text-white font-semibold text-lg mb-1">Sales by Region</h2>
-            <p className="text-gray-500 text-sm mb-4">Revenue distribution</p>
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie
-                  data={regions}
-                  cx="50%"
-                  cy="45%"
-                  innerRadius={55}
-                  outerRadius={85}
-                  paddingAngle={3}
-                  dataKey="value"
-                  isAnimationActive={false}
-                >
-                  {regions.map(r => (
-                    <Cell key={r.name} fill={r.color} stroke="transparent" />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{ background: '#111827', border: '1px solid #374151', borderRadius: '8px', fontSize: '13px' }}
-                  formatter={(v) => [`${v}%`, 'Share']}
-                />
-                <Legend
-                  iconType="circle"
-                  iconSize={8}
-                  formatter={(value) => <span style={{ color: '#9ca3af', fontSize: '12px' }}>{value}</span>}
-                />
-              </PieChart>
-            </ResponsiveContainer>
           </div>
         </div>
       </main>
