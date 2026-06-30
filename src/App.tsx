@@ -297,7 +297,7 @@ function Contact() {
             <a href="mailto:michael@thetrippgroup.com" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
               <IconMail /> michael@thetrippgroup.com
             </a>
-            <a href="https://www.linkedin.com/in/michael-tripp-0a9b7775/" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
+            <a href="https://www.linkedin.com/in/mtripp76" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
               <IconLinkedIn /> @MTRIPP on LinkedIn
             </a>
           </div>
