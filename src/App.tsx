@@ -220,7 +220,7 @@ function Newsletter() {
           <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">Newsletter</p>
           <h2 className="text-4xl font-bold text-white mb-4">The Floor Report</h2>
           <p className="text-gray-400 leading-relaxed mb-6">
-            A newsletter for frontline retail leaders. Store managers, district managers, and the people actually running the floor. No motivation fluff. Just execution, accountability, and what actually works at store level.
+            Real retail leadership from someone who actually runs the floor. Published weekly. Practical — the kind you can use Monday.
           </p>
           <ul className="space-y-3 mb-8">
             {[
@@ -247,9 +247,7 @@ function Newsletter() {
           <div className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-6">Latest from the newsletter</div>
           <div className="space-y-5">
             {[
-              { title: 'Your store is run by your worst habit, not your best intention.', tag: 'Leadership' },
-              { title: 'The manager who says "my team knows what to do" is the manager whose team doesn\'t.', tag: 'Execution' },
-              { title: 'Stop measuring effort. Measure the shelf.', tag: 'Accountability' },
+              { title: 'Your Team Watches What You Reward, Not What You Say', tag: 'Issue #1' },
             ].map(item => (
               <a
                 key={item.title}
