@@ -247,6 +247,7 @@ function Newsletter() {
           <div className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-6">Latest from the newsletter</div>
           <div className="space-y-5">
             {[
+              { title: 'Nobody Remembers Your Best Day', tag: 'Issue #2' },
               { title: 'Your Team Watches What You Reward, Not What You Say', tag: 'Issue #1' },
             ].map(item => (
               <a
