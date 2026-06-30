@@ -4,18 +4,28 @@ import { useAuth } from '../auth'
 import { Navigate } from 'react-router-dom'
 import ScoreBar from '../components/ScoreBar'
 
-const STATUS_LABEL: Record<string, string> = {
-  closed: 'Closed',
-  paced: 'Paced',
-  open: 'Open',
-  none: 'No entry',
+const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
+  closed: { label: 'Closed',   color: 'text-emerald-400', dot: 'bg-emerald-400' },
+  paced:  { label: 'Paced',    color: 'text-indigo-400',  dot: 'bg-indigo-400' },
+  open:   { label: 'Open',     color: 'text-zinc-300',    dot: 'bg-zinc-500' },
+  none:   { label: 'No entry', color: 'text-zinc-600',    dot: 'bg-zinc-700' },
 }
 
-const STATUS_COLOR: Record<string, string> = {
-  closed: 'text-emerald-400',
-  paced: 'text-indigo-400',
-  open: 'text-gray-300',
-  none: 'text-gray-600',
+const OUTCOME_COLOR: Record<string, string> = {
+  hit: 'text-emerald-400',
+  partial: 'text-amber-400',
+  miss: 'text-red-400',
+}
+
+function Avatar({ name }: { name: string }) {
+  const initials = name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
+  const hue = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 360
+  return (
+    <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+      style={{ background: `hsl(${hue} 50% 30%)`, border: `1px solid hsl(${hue} 50% 40%)` }}>
+      {initials}
+    </div>
+  )
 }
 
 export default function TeamBoard() {
@@ -26,76 +36,122 @@ export default function TeamBoard() {
   if (user?.role !== 'manager') return <Navigate to="/" replace />
 
   useEffect(() => {
-    teamApi.board()
-      .then(setMembers)
-      .finally(() => setLoading(false))
+    teamApi.board().then(setMembers).finally(() => setLoading(false))
   }, [])
 
   const slipping = members.filter(m => m.streak === 0 || m.sevenDayScore < 6)
+  const on_track = members.filter(m => !(m.streak === 0 || m.sevenDayScore < 6))
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading…</div>
+  if (loading) return (
+    <div className="flex items-center justify-center h-64">
+      <div className="w-5 h-5 border-2 border-zinc-700 border-t-emerald-400 rounded-full animate-spin" />
+    </div>
+  )
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-2xl font-bold text-white">District Team Board</h1>
+    <main className="max-w-3xl mx-auto px-4 py-8 space-y-5">
 
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <h1 className="text-xl font-bold text-white">District Team Board</h1>
+          <p className="text-zinc-500 text-xs mt-0.5">{members.length} leader{members.length !== 1 ? 's' : ''} · District {user?.districtId}</p>
+        </div>
+        <div className="flex gap-3 text-xs text-zinc-500">
+          <span><span className="text-emerald-400 font-semibold">{on_track.length}</span> on track</span>
+          {slipping.length > 0 && <span><span className="text-red-400 font-semibold">{slipping.length}</span> need attention</span>}
+        </div>
+      </div>
+
+      {/* Slipping alert */}
       {slipping.length > 0 && (
-        <div className="bg-red-900/20 border border-red-700/40 rounded-2xl p-4">
-          <h2 className="text-red-400 font-semibold text-sm mb-2">Needs attention ({slipping.length})</h2>
-          <div className="flex flex-wrap gap-2">
-            {slipping.map(m => (
-              <span key={m.userId} className="bg-red-900/40 text-red-300 text-xs px-2.5 py-1 rounded-full">{m.name}</span>
-            ))}
+        <div className="bg-red-950/25 border border-red-800/40 rounded-2xl p-4 flex items-start gap-3">
+          <span className="text-red-400 mt-0.5">⚠</span>
+          <div>
+            <p className="text-red-300 font-semibold text-sm">Needs attention</p>
+            <p className="text-red-500 text-xs mt-0.5 mb-2">Streak broken or 7-day score below 6</p>
+            <div className="flex flex-wrap gap-1.5">
+              {slipping.map(m => (
+                <span key={m.userId}
+                  className="bg-red-950/60 border border-red-800/50 text-red-300 text-xs px-2.5 py-0.5 rounded-full">
+                  {m.name}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-800 text-xs text-gray-500 uppercase tracking-wider">
-              <th className="text-left px-5 py-3 font-medium">Leader</th>
-              <th className="text-left px-5 py-3 font-medium hidden sm:table-cell">7-Day Score</th>
-              <th className="text-center px-4 py-3 font-medium">Streak</th>
-              <th className="text-center px-4 py-3 font-medium">Today</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-800">
-            {members.map(m => (
-              <tr key={m.userId} className="hover:bg-gray-800/50 transition-colors">
-                <td className="px-5 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-sm font-bold text-gray-200 shrink-0">
-                      {m.name[0].toUpperCase()}
-                    </div>
-                    <span className="font-medium text-white">{m.name}</span>
-                  </div>
-                </td>
-                <td className="px-5 py-4 hidden sm:table-cell w-48">
-                  <ScoreBar score={m.sevenDayScore} max={14} />
-                </td>
-                <td className="px-4 py-4 text-center">
-                  {m.streak > 0
-                    ? <span className="text-amber-400 font-semibold">🔥 {m.streak}</span>
-                    : <span className="text-gray-600">—</span>}
-                </td>
-                <td className="px-4 py-4 text-center">
-                  <span className={`font-medium ${STATUS_COLOR[m.todayStatus]}`}>
-                    {STATUS_LABEL[m.todayStatus]}
-                    {m.todayOutcome && ` · ${m.todayOutcome}`}
-                  </span>
-                </td>
+      {/* Table */}
+      <div className="card overflow-hidden">
+        {members.length === 0 ? (
+          <div className="p-12 text-center">
+            <p className="text-zinc-500 text-sm">No leaders in your district yet.</p>
+          </div>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-zinc-800">
+                <th className="text-left px-5 py-3.5 label">Leader</th>
+                <th className="text-left px-5 py-3.5 label hidden sm:table-cell">7-day score</th>
+                <th className="text-center px-4 py-3.5 label">Streak</th>
+                <th className="text-right px-5 py-3.5 label">Today</th>
               </tr>
-            ))}
-            {members.length === 0 && (
-              <tr>
-                <td colSpan={4} className="px-5 py-10 text-center text-gray-500">
-                  No leaders in your district yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {members.map((m, i) => {
+                const sc = STATUS_CONFIG[m.todayStatus] ?? STATUS_CONFIG.none
+                const isSlipping = m.streak === 0 || m.sevenDayScore < 6
+                return (
+                  <tr key={m.userId}
+                    className={`border-b border-zinc-800/50 last:border-0 transition-colors hover:bg-zinc-800/30
+                      ${isSlipping ? 'bg-red-950/10' : i % 2 === 0 ? '' : 'bg-zinc-800/10'}`}>
+
+                    {/* Leader */}
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <Avatar name={m.name} />
+                        <div>
+                          <p className="font-medium text-white">{m.name}</p>
+                          {isSlipping && (
+                            <p className="text-[10px] text-red-500 font-medium">Needs attention</p>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* 7-day score */}
+                    <td className="px-5 py-4 hidden sm:table-cell w-52">
+                      <ScoreBar score={m.sevenDayScore} max={14} />
+                    </td>
+
+                    {/* Streak */}
+                    <td className="px-4 py-4 text-center">
+                      {m.streak > 0
+                        ? <span className="text-amber-300 font-bold text-sm">🔥 {m.streak}</span>
+                        : <span className="text-zinc-700 text-sm">—</span>}
+                    </td>
+
+                    {/* Today */}
+                    <td className="px-5 py-4 text-right">
+                      <div className="inline-flex items-center gap-1.5">
+                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${sc.dot}`} />
+                        <span className={`text-xs font-medium ${sc.color}`}>
+                          {sc.label}
+                          {m.todayOutcome && (
+                            <span className={`ml-1 ${OUTCOME_COLOR[m.todayOutcome] ?? ''}`}>
+                              · {m.todayOutcome}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
     </main>
   )
