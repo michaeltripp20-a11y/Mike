@@ -6,12 +6,6 @@ const NAV_LINKS = ['About', 'Experience', 'Projects', 'Contact']
 
 const EXPERIENCE = [
   {
-    company: 'Red Lion Mobile',
-    role: 'Co-Founder & CEO',
-    period: '2018 – Present',
-    desc: 'Building mobile-first software products and digital experiences for enterprise and mid-market clients. Leading strategy, product, and engineering.',
-  },
-  {
     company: 'Independent Consultant',
     role: 'Product & Growth Advisor',
     period: '2015 – 2018',
@@ -31,12 +25,6 @@ const PROJECTS = [
     desc: 'Real-time sales intelligence dashboard with live KPIs, transaction streams, and revenue analytics.',
     tags: ['React', 'TypeScript', 'Recharts'],
     color: '#10b981',
-  },
-  {
-    name: 'Red Lion Platform',
-    desc: 'Full-stack mobile and web platform powering client products with custom CMS, analytics, and user management.',
-    tags: ['Node.js', 'React Native', 'AWS'],
-    color: '#6366f1',
   },
   {
     name: 'Growth OS',
@@ -104,7 +92,7 @@ function Nav({ active, onNav }: { active: string; onNav: (s: string) => void }) 
             </button>
           ))}
           <a
-            href="mailto:mTripp@redlionmobile.com"
+            href="mailto:mTripp@michaeltripp.com"
             className="text-sm bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-gray-200 transition-colors"
           >
             Get in touch
@@ -188,7 +176,7 @@ function About() {
           <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">About</p>
           <h2 className="text-4xl font-bold text-white leading-tight mb-6">Building things that matter.</h2>
           <p className="text-gray-400 leading-relaxed mb-4">
-            I'm Michael Tripp — co-founder of Red Lion Mobile and a lifelong builder at the intersection of technology, sales, and product strategy. My career has been defined by one belief: great software should create undeniable value for the people who use it.
+            I'm Michael Tripp — a lifelong builder at the intersection of technology, sales, and product strategy. My career has been defined by one belief: great software should create undeniable value for the people who use it.
           </p>
           <p className="text-gray-400 leading-relaxed">
             I've spent 15+ years helping companies grow — from closing enterprise deals to shipping mobile products used by thousands. Whether I'm in a boardroom or a codebase, I bring the same energy: curiosity, clarity, and relentless execution.
@@ -198,7 +186,6 @@ function About() {
           {[
             { label: 'Years of experience', value: '15+' },
             { label: 'Products shipped', value: '20+' },
-            { label: 'Company founded', value: 'Red Lion Mobile' },
             { label: 'Based in', value: 'United States' },
           ].map(({ label, value }) => (
             <div key={label} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
@@ -277,7 +264,7 @@ function Contact() {
     // Opens the user's mail client pre-populated
     const subject = encodeURIComponent(`Message from ${form.name}`)
     const body = encodeURIComponent(`${form.message}\n\nFrom: ${form.name}\nEmail: ${form.email}`)
-    window.open(`mailto:mTripp@redlionmobile.com?subject=${subject}&body=${body}`, '_blank')
+    window.open(`mailto:mTripp@michaeltripp.com?subject=${subject}&body=${body}`, '_blank')
     setSent(true)
     setTimeout(() => setSent(false), 4000)
   }
@@ -292,8 +279,8 @@ function Contact() {
             Whether you're looking to build something new, explore a partnership, or just want to connect — I'd love to hear from you.
           </p>
           <div className="flex flex-col gap-4">
-            <a href="mailto:mTripp@redlionmobile.com" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
-              <IconMail /> mTripp@redlionmobile.com
+            <a href="mailto:mTripp@michaeltripp.com" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
+              <IconMail /> mTripp@michaeltripp.com
             </a>
             <a href="https://www.linkedin.com/in/michaeltripp" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
               <IconLinkedIn /> linkedin.com/in/michaeltripp
