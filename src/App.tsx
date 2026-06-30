@@ -2,39 +2,24 @@ import { useState, useEffect } from 'react'
 
 /* ─── Data ──────────────────────────────────────────────────────────────── */
 
-const NAV_LINKS = ['About', 'Experience', 'Projects', 'Contact']
+const NAV_LINKS = ['About', 'Experience', 'Newsletter', 'Contact']
 
 const EXPERIENCE = [
   {
-    company: 'Independent Consultant',
-    role: 'Product & Growth Advisor',
-    period: '2015 – 2018',
-    desc: 'Advised early-stage startups on go-to-market strategy, product-market fit, and mobile app development across fintech, health, and retail verticals.',
+    company: 'Premium Retail Services',
+    role: 'District Manager',
+    period: '2020 – Present',
+    desc: 'Leading 19 stores and a team of 60 field reps across Arkansas. Focused on execution, accountability, and turning floor-level data into district-wide results.',
   },
   {
-    company: 'Previous Roles',
-    role: 'Sales & Business Development',
-    period: '2010 – 2015',
-    desc: 'Built and led enterprise sales teams, consistently exceeding quota and opening new market segments in SaaS and technology.',
+    company: 'Nikco Wholesale',
+    role: 'Director of Sales',
+    period: 'Jan 2020 – Apr 2024',
+    desc: 'Directed wholesale sales strategy, built out the sales team, and drove revenue growth across key retail accounts.',
   },
 ]
 
-const PROJECTS = [
-  {
-    name: 'SalesIQ',
-    desc: 'Real-time sales intelligence dashboard with live KPIs, transaction streams, and revenue analytics.',
-    tags: ['React', 'TypeScript', 'Recharts'],
-    color: '#10b981',
-  },
-  {
-    name: 'Growth OS',
-    desc: 'Internal sales enablement tool used by distributed teams to track pipeline health and automate follow-up workflows.',
-    tags: ['Automation', 'CRM Integration', 'Analytics'],
-    color: '#f59e0b',
-  },
-]
-
-const SKILLS = ['Product Strategy', 'Mobile Development', 'React / TypeScript', 'Node.js', 'AWS', 'Go-to-Market', 'Team Leadership', 'Sales Engineering']
+const SKILLS = ['Retail Operations', 'Field Team Leadership', 'District Management', 'Sales Strategy', 'Store Execution', 'Frontline Coaching', 'P&L Accountability', 'LinkedIn Content']
 
 /* ─── Icons ─────────────────────────────────────────────────────────────── */
 
@@ -128,7 +113,7 @@ function Hero({ onNav }: { onNav: (s: string) => void }) {
         {/* Eyebrow */}
         <div className="inline-flex items-center gap-2 bg-gray-800/60 border border-gray-700 rounded-full px-4 py-1.5 mb-8 animate-fade-up">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="text-sm text-gray-300">Open to new opportunities</span>
+          <span className="text-sm text-gray-300">District Manager · The Floor Report · @MTRIPP</span>
         </div>
 
         <h1 className="text-5xl sm:text-7xl font-extrabold text-white leading-tight tracking-tight animate-fade-up delay-100">
@@ -137,16 +122,18 @@ function Hero({ onNav }: { onNav: (s: string) => void }) {
         </h1>
 
         <p className="mt-6 text-xl text-gray-400 max-w-xl leading-relaxed animate-fade-up delay-200">
-          Founder, product builder, and growth leader. I create software that turns complex problems into elegant, revenue-generating experiences.
+          District Manager. Retail leader. I write about what actually works on the floor — for the managers running stores every day.
         </p>
 
         <div className="mt-10 flex flex-wrap gap-4 animate-fade-up delay-300">
-          <button
-            onClick={() => onNav('Projects')}
+          <a
+            href="https://thefloorreport.substack.com"
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
           >
-            See my work <IconArrow />
-          </button>
+            Read The Floor Report <IconArrow />
+          </a>
           <button
             onClick={() => onNav('Contact')}
             className="flex items-center gap-2 border border-gray-600 text-white px-6 py-3 rounded-full font-semibold hover:border-gray-400 transition-colors"
@@ -174,19 +161,20 @@ function About() {
       <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
         <div>
           <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">About</p>
-          <h2 className="text-4xl font-bold text-white leading-tight mb-6">Building things that matter.</h2>
+          <h2 className="text-4xl font-bold text-white leading-tight mb-6">Execution over motivation.</h2>
           <p className="text-gray-400 leading-relaxed mb-4">
-            I'm Michael Tripp — a lifelong builder at the intersection of technology, sales, and product strategy. My career has been defined by one belief: great software should create undeniable value for the people who use it.
+            I'm M Tripp — District Manager, retail leader, and founder of The Floor Report. I've led 19 stores and 60 reps across Arkansas, and I've learned that most leadership content is built for people who've never closed a store on a Saturday night.
           </p>
           <p className="text-gray-400 leading-relaxed">
-            I've spent 15+ years helping companies grow — from closing enterprise deals to shipping mobile products used by thousands. Whether I'm in a boardroom or a codebase, I bring the same energy: curiosity, clarity, and relentless execution.
+            So I built something different. The Floor Report is a newsletter for the managers actually running the floor. And on LinkedIn as @MTRIPP, I post the kind of content that gets shared in manager group chats, not boardroom decks.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {[
-            { label: 'Years of experience', value: '15+' },
-            { label: 'Products shipped', value: '20+' },
-            { label: 'Based in', value: 'United States' },
+            { label: 'Stores led', value: '19' },
+            { label: 'Field reps managed', value: '60' },
+            { label: 'Newsletter', value: 'The Floor Report' },
+            { label: 'Based in', value: 'Little Rock, AR' },
           ].map(({ label, value }) => (
             <div key={label} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
               <div className="text-2xl font-bold text-white mb-1">{value}</div>
@@ -224,31 +212,59 @@ function Experience() {
   )
 }
 
-function Projects() {
+function Newsletter() {
   return (
-    <section id="Projects" className="py-24 px-6 border-t border-gray-800">
-      <div className="max-w-5xl mx-auto">
-        <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">Projects</p>
-        <h2 className="text-4xl font-bold text-white mb-12">What I've built.</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          {PROJECTS.map(p => (
-            <div key={p.name} className="bg-gray-900 border border-gray-800 rounded-xl p-6 flex flex-col gap-4 hover:border-gray-600 transition-colors group">
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `${p.color}22` }}>
-                <div className="w-4 h-4 rounded-full" style={{ background: p.color }}></div>
-              </div>
-              <div>
-                <div className="text-white font-semibold text-lg mb-2">{p.name}</div>
-                <p className="text-gray-400 text-sm leading-relaxed">{p.desc}</p>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-auto">
-                {p.tags.map(t => (
-                  <span key={t} className="text-xs rounded-full px-2 py-0.5 font-medium" style={{ background: `${p.color}22`, color: p.color }}>
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+    <section id="Newsletter" className="py-24 px-6 border-t border-gray-800">
+      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">Newsletter</p>
+          <h2 className="text-4xl font-bold text-white mb-4">The Floor Report</h2>
+          <p className="text-gray-400 leading-relaxed mb-6">
+            A newsletter for frontline retail leaders. Store managers, district managers, and the people actually running the floor. No motivation fluff. Just execution, accountability, and what actually works at store level.
+          </p>
+          <ul className="space-y-3 mb-8">
+            {[
+              'Written for store and district managers',
+              'Execution-first. No fluff.',
+              'Real tactics from the floor',
+            ].map(line => (
+              <li key={line} className="flex items-center gap-3 text-gray-300 text-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0"></span>
+                {line}
+              </li>
+            ))}
+          </ul>
+          <a
+            href="https://thefloorreport.substack.com"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+          >
+            Read The Floor Report <IconArrow />
+          </a>
+        </div>
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+          <div className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-6">Latest from the newsletter</div>
+          <div className="space-y-5">
+            {[
+              { title: 'Your store is run by your worst habit, not your best intention.', tag: 'Leadership' },
+              { title: 'The manager who says "my team knows what to do" is the manager whose team doesn\'t.', tag: 'Execution' },
+              { title: 'Stop measuring effort. Measure the shelf.', tag: 'Accountability' },
+            ].map(item => (
+              <a
+                key={item.title}
+                href="https://thefloorreport.substack.com"
+                target="_blank"
+                rel="noreferrer"
+                className="block group"
+              >
+                <div className="text-xs text-indigo-400 font-semibold mb-1">{item.tag}</div>
+                <div className="text-gray-300 text-sm leading-relaxed group-hover:text-white transition-colors">
+                  {item.title}
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -264,7 +280,7 @@ function Contact() {
     // Opens the user's mail client pre-populated
     const subject = encodeURIComponent(`Message from ${form.name}`)
     const body = encodeURIComponent(`${form.message}\n\nFrom: ${form.name}\nEmail: ${form.email}`)
-    window.open(`mailto:mTripp@michaeltripp.com?subject=${subject}&body=${body}`, '_blank')
+    window.open(`mailto:mTripp@redlionmobile.com?subject=${subject}&body=${body}`, '_blank')
     setSent(true)
     setTimeout(() => setSent(false), 4000)
   }
@@ -276,14 +292,14 @@ function Contact() {
           <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">Contact</p>
           <h2 className="text-4xl font-bold text-white mb-6">Let's talk.</h2>
           <p className="text-gray-400 leading-relaxed mb-8">
-            Whether you're looking to build something new, explore a partnership, or just want to connect — I'd love to hear from you.
+            Reach out about The Floor Report, speaking, retail leadership, or anything else worth talking about.
           </p>
           <div className="flex flex-col gap-4">
-            <a href="mailto:mTripp@michaeltripp.com" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
-              <IconMail /> mTripp@michaeltripp.com
+            <a href="mailto:mTripp@redlionmobile.com" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
+              <IconMail /> mTripp@redlionmobile.com
             </a>
-            <a href="https://www.linkedin.com/in/michaeltripp" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
-              <IconLinkedIn /> linkedin.com/in/michaeltripp
+            <a href="https://www.linkedin.com/in/michael-tripp-0a9b7775/" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
+              <IconLinkedIn /> @MTRIPP on LinkedIn
             </a>
           </div>
         </div>
@@ -343,7 +359,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    const sections = ['About', 'Experience', 'Projects', 'Contact']
+    const sections = ['About', 'Experience', 'Newsletter', 'Contact']
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(e => { if (e.isIntersecting) setActiveNav(e.target.id) })
@@ -360,7 +376,7 @@ export default function App() {
       <Hero onNav={scrollTo} />
       <About />
       <Experience />
-      <Projects />
+      <Newsletter />
       <Contact />
       <Footer />
     </div>
