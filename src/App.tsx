@@ -77,7 +77,7 @@ function Nav({ active, onNav }: { active: string; onNav: (s: string) => void }) 
             </button>
           ))}
           <a
-            href="mailto:mTripp@michaeltripp.com"
+            href="mailto:michael@thetrippgroup.com"
             className="text-sm bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-gray-200 transition-colors"
           >
             Get in touch
@@ -279,7 +279,7 @@ function Contact() {
     // Opens the user's mail client pre-populated
     const subject = encodeURIComponent(`Message from ${form.name}`)
     const body = encodeURIComponent(`${form.message}\n\nFrom: ${form.name}\nEmail: ${form.email}`)
-    window.open(`mailto:mTripp@michaeltripp.com?subject=${subject}&body=${body}`, '_blank')
+    window.open(`mailto:michael@thetrippgroup.com?subject=${subject}&body=${body}`, '_blank')
     setSent(true)
     setTimeout(() => setSent(false), 4000)
   }
@@ -294,8 +294,8 @@ function Contact() {
             Reach out about The Floor Report, speaking, retail leadership, or anything else worth talking about.
           </p>
           <div className="flex flex-col gap-4">
-            <a href="mailto:mTripp@michaeltripp.com" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
-              <IconMail /> mTripp@michaeltripp.com
+            <a href="mailto:michael@thetrippgroup.com" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
+              <IconMail /> michael@thetrippgroup.com
             </a>
             <a href="https://www.linkedin.com/in/michael-tripp-0a9b7775/" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
               <IconLinkedIn /> @MTRIPP on LinkedIn
