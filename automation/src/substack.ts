@@ -64,25 +64,29 @@ function htmlToSubstackDoc(html: string): object {
 
 function parseInline(html: string): object[] {
   const nodes: object[] = [];
-  // Strip outer tag if present
+  // Strip outer block tag
   const inner = html.replace(/^<[^>]+>|<\/[^>]+>$/g, "");
-  const strongRegex = /<strong>([\s\S]*?)<\/strong>/g;
-  let last = 0;
+  // Replace <br/> and <br /> with a placeholder
+  const withBreaks = inner.replace(/<br\s*\/?>/gi, "\n");
+  // Tokenize bold and italic inline tags
+  const tokenRegex = /<(strong|em)>([\s\S]*?)<\/\1>|([^<]+)/g;
   let m: RegExpExecArray | null;
 
-  while ((m = strongRegex.exec(inner)) !== null) {
-    if (m.index > last) {
-      const text = inner.slice(last, m.index).replace(/<[^>]+>/g, "");
-      if (text) nodes.push({ type: "text", text });
+  while ((m = tokenRegex.exec(withBreaks)) !== null) {
+    if (m[1] === "strong" && m[2]) {
+      const text = m[2].replace(/<[^>]+>/g, "");
+      if (text) nodes.push({ type: "text", marks: [{ type: "strong" }], text });
+    } else if (m[1] === "em" && m[2]) {
+      const text = m[2].replace(/<[^>]+>/g, "");
+      if (text) nodes.push({ type: "text", marks: [{ type: "em" }], text });
+    } else if (m[3]) {
+      // Plain text — split on line breaks and insert hard_break nodes
+      const parts = m[3].split("\n");
+      parts.forEach((part, i) => {
+        if (part) nodes.push({ type: "text", text: part });
+        if (i < parts.length - 1) nodes.push({ type: "hard_break" });
+      });
     }
-    const boldText = m[1].replace(/<[^>]+>/g, "");
-    if (boldText) nodes.push({ type: "text", marks: [{ type: "strong" }], text: boldText });
-    last = m.index + m[0].length;
-  }
-
-  if (last < inner.length) {
-    const text = inner.slice(last).replace(/<[^>]+>/g, "");
-    if (text) nodes.push({ type: "text", text });
   }
 
   return nodes;
