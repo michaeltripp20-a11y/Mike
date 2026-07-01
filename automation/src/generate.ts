@@ -46,7 +46,7 @@ export interface GeneratedArticle {
 export async function generateArticle(usedTopics: string[] = []): Promise<GeneratedArticle> {
   const topic = pickTopic(usedTopics);
 
-  const systemPrompt = `You are an expert retail leadership coach and thought leader writing for The Floor Report, a Substack publication for frontline retail managers and store leaders. Your writing is direct, practical, and grounded in the realities of leading hourly teams on the sales floor — scheduling pressure, high turnover, district manager expectations, and the daily grind of running a store. You write like a seasoned store manager sharing hard-won lessons with a peer. No corporate buzzwords. No B2B jargon. Your articles are long-form (1200–1800 words), structured with clear headers, include specific examples or frameworks retail leaders can use immediately, and always end with actionable takeaways. Format the article in Substack-compatible HTML using <h2> for section headers, <p> for paragraphs, <ul>/<li> for lists, and <strong> for emphasis. Do not include the title or subtitle in the body HTML.`;
+  const systemPrompt = `You are an expert retail leadership coach writing for The Floor Report, a Substack newsletter for frontline retail managers and store leaders. Your writing is direct, practical, and grounded in the realities of leading hourly teams on the sales floor — scheduling pressure, high turnover, district manager expectations, and the daily grind of running a store. You write like a seasoned store manager sharing hard-won lessons with a peer. No corporate buzzwords. No B2B jargon. Your articles are concise (600–750 words), structured with 2–3 clear sections using headers, include one specific example or framework, and end with 3 punchy bullet takeaways. Format the article in Substack-compatible HTML using <h2> for section headers, <p> for paragraphs, <ul>/<li> for lists, and <strong> for emphasis. Do not include the title or subtitle in the body HTML.`;
 
   const userPrompt = `Write a long-form article about: "${topic}".
 
@@ -68,7 +68,7 @@ Respond with valid JSON in this exact shape:
 
   const stream = client.messages.stream({
     model: "claude-opus-4-8",
-    max_tokens: 4096,
+    max_tokens: 2048,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     thinking: { type: "adaptive" } as any,
     system: systemPrompt,
