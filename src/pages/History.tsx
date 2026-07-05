@@ -1,15 +1,7 @@
 import { useState, useEffect } from 'react'
-import { daysApi, type DayEntry } from '../api'
+import { daysApi, coachingApi, FOCUS_AREA_LABELS, type DayEntry } from '../api'
 import StreakBadge from '../components/StreakBadge'
-import ScoreBar from '../components/ScoreBar'
 import CoachingBadge from '../components/CoachingBadge'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-
-const OUTCOME_COLOR: Record<string, string> = {
-  hit: '#4f46e5',
-  partial: '#f59e0b',
-  miss: '#ef4444',
-}
 
 const OUTCOME_LABEL: Record<string, string> = {
   hit: 'Hit',
@@ -19,22 +11,21 @@ const OUTCOME_LABEL: Record<string, string> = {
 
 export default function History() {
   const [days, setDays] = useState<DayEntry[]>([])
+  const [categoryTotals, setCategoryTotals] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    daysApi.history().then(setDays).finally(() => setLoading(false))
+    Promise.all([
+      daysApi.history(),
+      coachingApi.myCategoryTotals(),
+    ]).then(([d, c]) => {
+      setDays(d)
+      setCategoryTotals(c)
+    }).finally(() => setLoading(false))
   }, [])
 
-  const closed = days.filter(d => d.status === 'closed')
-  const sevenDay = closed.slice(0, 7)
-  const score = sevenDay.reduce((s, d) => s + (d.scorePoints ?? 0), 0)
   const streak = days[0]?.streak ?? 0
-
-  const chartData = [...sevenDay].reverse().map(d => ({
-    date: new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short' }),
-    pts: d.scorePoints ?? 0,
-    outcome: d.overallOutcome ?? 'miss',
-  }))
+  const totalCoaching = Object.values(categoryTotals).reduce((s, n) => s + n, 0)
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
@@ -51,42 +42,40 @@ export default function History() {
         <StreakBadge streak={streak} />
       </div>
 
-      {/* 7-day score card */}
-      <div className="card p-6 space-y-5">
+      {/* Coaching category totals */}
+      <div className="card p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="font-semibold text-gray-900">7-Day Score</h2>
-            <p className="text-gray-400 text-xs mt-0.5">hit = 2 pts · partial = 1 · miss = 0</p>
+            <h2 className="font-semibold text-gray-900">Coaching Focus Areas</h2>
+            <p className="text-gray-400 text-xs mt-0.5">
+              {totalCoaching === 0 ? 'No coaching sessions yet' : `${totalCoaching} total session${totalCoaching !== 1 ? 's' : ''}`}
+            </p>
           </div>
-          <span className={`text-2xl font-bold tabular-nums
-            ${score >= 10 ? 'text-indigo-600' : score >= 6 ? 'text-amber-500' : 'text-red-500'}`}>
-            {score}<span className="text-gray-300 text-base">/14</span>
-          </span>
         </div>
-        <ScoreBar score={score} max={14} />
 
-        {chartData.length > 0 && (
-          <ResponsiveContainer width="100%" height={90}>
-            <BarChart data={chartData} margin={{ top: 4, right: 0, bottom: 0, left: 0 }} barSize={28}>
-              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-              <YAxis hide domain={[0, 2]} />
-              <Tooltip
-                cursor={{ fill: 'rgba(0,0,0,0.04)' }}
-                contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '12px', color: '#374151' }}
-                formatter={(v, _, props) => [`${v} pt${v !== 1 ? 's' : ''} — ${OUTCOME_LABEL[props.payload.outcome] ?? ''}`, '']}
-                labelStyle={{ color: '#9ca3af', marginBottom: 2 }}
-              />
-              <Bar dataKey="pts" radius={[5, 5, 0, 0]} isAnimationActive={false}>
-                {chartData.map((d, i) => (
-                  <Cell key={i} fill={OUTCOME_COLOR[d.outcome] ?? '#e5e7eb'} fillOpacity={0.85} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-
-        {chartData.length === 0 && (
-          <p className="text-center text-gray-400 text-sm py-4">No closed days yet</p>
+        {totalCoaching === 0 ? (
+          <p className="text-gray-400 text-sm text-center py-2">No coaching notes logged yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {Object.entries(FOCUS_AREA_LABELS).map(([key, label]) => {
+              const count = categoryTotals[key] ?? 0
+              const pct = totalCoaching > 0 ? (count / totalCoaching) * 100 : 0
+              return (
+                <div key={key} className="flex items-center gap-3">
+                  <span className="text-xs text-gray-600 w-36 shrink-0">{label}</span>
+                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-indigo-500 transition-all duration-500"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-semibold text-gray-500 tabular-nums w-4 text-right">
+                    {count}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
         )}
       </div>
 

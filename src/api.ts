@@ -146,6 +146,8 @@ export const coachingApi = {
 
   myFollowUps: () => api.get<MyFollowUpItem[]>('/coaching/my-follow-ups'),
 
+  myCategoryTotals: () => api.get<Record<string, number>>('/coaching/my-category-totals'),
+
   resolve: (id: number, resolution: string) =>
     api.patch<CoachingNote>(`/coaching/${id}/resolve`, { resolution }),
 }

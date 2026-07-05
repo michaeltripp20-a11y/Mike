@@ -203,6 +203,22 @@ router.get('/my-follow-ups', (req, res) => {
   res.json(enriched)
 })
 
+// GET /coaching/my-category-totals — leader: count of coaching notes per focus area
+router.get('/my-category-totals', (req, res) => {
+  const { userId, role } = req.jwtPayload
+  if (role !== 'leader') { res.json({}); return }
+
+  const notes = db.select().from(coachingNotes)
+    .where(eq(coachingNotes.leaderId, userId))
+    .all()
+
+  const totals: Record<string, number> = {}
+  for (const n of notes) {
+    totals[n.focusArea] = (totals[n.focusArea] ?? 0) + 1
+  }
+  res.json(totals)
+})
+
 // PATCH /coaching/:id/resolve — manager marks follow-up complete
 router.patch('/:id/resolve', requireManager, (req, res) => {
   const id = Number(req.params.id)
