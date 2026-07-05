@@ -54,6 +54,42 @@ export const LEADER_TYPES: Record<string, LeaderTypeConfig> = {
       ownership:     'Ownership',
     },
   },
+  servant_leader: {
+    label: 'Servant Leader',
+    description: 'Puts the team first, removes barriers, and leads by example',
+    emoji: '🫱',
+    values: {
+      humility:      'Humility',
+      service:       'Service',
+      listening:     'Listening',
+      trust:         'Trust',
+      empathy:       'Empathy',
+    },
+  },
+  transformational: {
+    label: 'Transformational',
+    description: 'Inspires change, challenges the status quo, and elevates potential',
+    emoji: '🚀',
+    values: {
+      vision:        'Vision',
+      inspiration:   'Inspiration',
+      innovation:    'Innovation',
+      growth_mindset: 'Growth Mindset',
+      resilience:    'Resilience',
+    },
+  },
+  operational: {
+    label: 'Operational',
+    description: 'Masters the system, drives efficiency, and eliminates waste',
+    emoji: '📋',
+    values: {
+      efficiency:        'Efficiency',
+      standardization:   'Standardization',
+      accountability:    'Accountability',
+      continuous_improvement: 'Continuous Improvement',
+      reliability:       'Reliability',
+    },
+  },
 }
 
 export type LeaderTypeKey = keyof typeof LEADER_TYPES
