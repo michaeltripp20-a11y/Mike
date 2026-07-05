@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { daysApi, type DayEntry } from '../api'
 import StreakBadge from '../components/StreakBadge'
+import FollowUpBanner from '../components/FollowUpBanner'
 
 type Outcome = 'hit' | 'partial' | 'miss'
 
@@ -117,6 +118,8 @@ export default function Today() {
         </div>
         {day && <StreakBadge streak={day.streak} />}
       </div>
+
+      <FollowUpBanner />
 
       {error && (
         <div className="flex items-center gap-2 bg-red-950/40 border border-red-800/50 text-red-400 text-sm px-4 py-3 rounded-xl">

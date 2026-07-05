@@ -97,12 +97,29 @@ export interface CoachingNote {
   observation: string
   agreedActions: string
   followUpDate: string | null
+  followUpStatus: 'pending' | 'complete' | null
+  followUpResolution: string | null
+  resolvedAt: string | null
   createdAt: string
 }
 
 export interface CoachingNoteWithDay extends CoachingNote {
   dayDate: string | null
   dayOutcome: 'hit' | 'partial' | 'miss' | null
+}
+
+export type FollowUpUrgency = 'overdue' | 'today' | 'upcoming'
+
+export interface FollowUpItem extends CoachingNote {
+  leaderName: string
+  dayDate: string | null
+  dayOutcome: 'hit' | 'partial' | 'miss' | null
+  urgency: FollowUpUrgency
+}
+
+export interface MyFollowUpItem extends CoachingNote {
+  dayDate: string | null
+  urgency: 'overdue' | 'today'
 }
 
 export interface LeaderDay {
@@ -124,4 +141,11 @@ export const coachingApi = {
   forLeader: (leaderId: number) => api.get<CoachingNoteWithDay[]>(`/coaching/leader/${leaderId}`),
 
   leaderDays: (leaderId: number) => api.get<LeaderDay[]>(`/coaching/leader/${leaderId}/days`),
+
+  followUps: () => api.get<FollowUpItem[]>('/coaching/follow-ups'),
+
+  myFollowUps: () => api.get<MyFollowUpItem[]>('/coaching/my-follow-ups'),
+
+  resolve: (id: number, resolution: string) =>
+    api.patch<CoachingNote>(`/coaching/${id}/resolve`, { resolution }),
 }

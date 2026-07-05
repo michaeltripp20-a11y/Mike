@@ -57,6 +57,9 @@ sqlite.exec(`
     observation TEXT NOT NULL,
     agreed_actions TEXT NOT NULL,
     follow_up_date TEXT,
+    follow_up_status TEXT DEFAULT 'pending',
+    follow_up_resolution TEXT,
+    resolved_at INTEGER,
     created_at INTEGER NOT NULL
   );
 

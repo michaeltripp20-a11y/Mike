@@ -4,6 +4,7 @@ import { useAuth } from '../auth'
 import { Navigate } from 'react-router-dom'
 import ScoreBar from '../components/ScoreBar'
 import CoachingPanel from '../components/CoachingPanel'
+import FollowUpDashboard from '../components/FollowUpDashboard'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
   closed: { label: 'Closed',   color: 'text-blue-400',   dot: 'bg-blue-400' },
@@ -167,6 +168,8 @@ export default function TeamBoard() {
           </table>
         )}
       </div>
+
+      <FollowUpDashboard />
 
       {coaching && (
         <CoachingPanel

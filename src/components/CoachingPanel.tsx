@@ -4,6 +4,46 @@ import {
   type FocusArea, type CoachingNote, type LeaderDay, type CoachingNoteWithDay,
 } from '../api'
 
+function HistoryResolveForm({ noteId, onResolved }: { noteId: number; onResolved: () => void }) {
+  const [text, setText] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!text.trim()) { setError('Add a resolution note'); return }
+    setSaving(true)
+    setError('')
+    try {
+      await coachingApi.resolve(noteId, text)
+      onResolved()
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="mt-3 pt-3 border-t border-zinc-800/60 space-y-2">
+      <label className="label block mb-1">Resolution note</label>
+      <textarea
+        rows={2}
+        value={text}
+        onChange={e => setText(e.target.value)}
+        placeholder="What was discussed or observed at follow-up?"
+        className="input resize-none text-xs leading-relaxed"
+      />
+      {error && <p className="text-red-400 text-xs">{error}</p>}
+      <button type="submit" disabled={saving}
+        className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500
+          disabled:opacity-40 text-white transition-colors">
+        {saving ? 'Saving…' : 'Mark complete'}
+      </button>
+    </form>
+  )
+}
+
 const FOCUS_OPTIONS = Object.entries(FOCUS_AREA_LABELS) as [FocusArea, string][]
 
 const OUTCOME_COLOR: Record<string, string> = {
@@ -31,6 +71,7 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
+  const [resolving, setResolving] = useState<number | null>(null)
 
   const [form, setForm] = useState({
     focusArea: '' as FocusArea | '',
@@ -294,9 +335,13 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                       </p>
                     </div>
                     {n.followUpDate && (
-                      <span className="text-[10px] bg-zinc-800 border border-zinc-700 text-zinc-400
-                        px-2 py-0.5 rounded-full shrink-0">
-                        Follow-up: {new Date(n.followUpDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 border
+                        ${n.followUpStatus === 'complete'
+                          ? 'bg-blue-950/60 border-blue-800/50 text-blue-400'
+                          : 'bg-zinc-800 border-zinc-700 text-zinc-400'}`}>
+                        {n.followUpStatus === 'complete' ? '✓ Resolved' : (
+                          <>Follow-up: {new Date(n.followUpDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</>
+                        )}
                       </span>
                     )}
                   </div>
@@ -309,7 +354,33 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                       <p className="label mb-1">Agreed actions</p>
                       <p className="text-sm text-zinc-300 leading-relaxed">{n.agreedActions}</p>
                     </div>
+                    {n.followUpStatus === 'complete' && n.followUpResolution && (
+                      <div>
+                        <p className="label mb-1">Resolution</p>
+                        <p className="text-sm text-blue-300/80 leading-relaxed">{n.followUpResolution}</p>
+                      </div>
+                    )}
                   </div>
+                  {n.followUpDate && n.followUpStatus !== 'complete' && (
+                    resolving === n.id ? (
+                      <HistoryResolveForm noteId={n.id} onResolved={async () => {
+                        setResolving(null)
+                        const [days, notes] = await Promise.all([
+                          coachingApi.leaderDays(leaderId),
+                          coachingApi.forLeader(leaderId),
+                        ])
+                        setLeaderDays(days)
+                        setHistory(notes)
+                      }} />
+                    ) : (
+                      <button
+                        onClick={() => setResolving(n.id)}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-800/50
+                          bg-indigo-950/30 text-indigo-400 hover:bg-indigo-950/60 transition-colors">
+                        Resolve →
+                      </button>
+                    )
+                  )}
                 </div>
               ))}
             </div>

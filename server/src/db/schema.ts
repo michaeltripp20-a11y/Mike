@@ -45,6 +45,9 @@ export const coachingNotes = sqliteTable('coaching_notes', {
   }).notNull(),
   observation: text('observation').notNull(),
   agreedActions: text('agreed_actions').notNull(),
-  followUpDate: text('follow_up_date'),   // YYYY-MM-DD, optional
+  followUpDate: text('follow_up_date'),         // YYYY-MM-DD, optional
+  followUpStatus: text('follow_up_status', { enum: ['pending', 'complete'] }).default('pending'),
+  followUpResolution: text('follow_up_resolution'),
+  resolvedAt: integer('resolved_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 })
