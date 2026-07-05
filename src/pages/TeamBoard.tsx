@@ -3,6 +3,7 @@ import { teamApi, type TeamMember } from '../api'
 import { useAuth } from '../auth'
 import { Navigate } from 'react-router-dom'
 import ScoreBar from '../components/ScoreBar'
+import CoachingPanel from '../components/CoachingPanel'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
   closed: { label: 'Closed',   color: 'text-blue-400',   dot: 'bg-blue-400' },
@@ -32,6 +33,7 @@ export default function TeamBoard() {
   const { user } = useAuth()
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
+  const [coaching, setCoaching] = useState<{ id: number; name: string } | null>(null)
 
   if (user?.role !== 'manager') return <Navigate to="/" replace />
 
@@ -58,7 +60,7 @@ export default function TeamBoard() {
           <p className="text-zinc-500 text-xs mt-0.5">{members.length} leader{members.length !== 1 ? 's' : ''} · District {user?.districtId}</p>
         </div>
         <div className="flex gap-3 text-xs text-zinc-500">
-          <span><span className="text-emerald-400 font-semibold">{on_track.length}</span> on track</span>
+          <span><span className="text-blue-400 font-semibold">{on_track.length}</span> on track</span>
           {slipping.length > 0 && <span><span className="text-red-400 font-semibold">{slipping.length}</span> need attention</span>}
         </div>
       </div>
@@ -96,6 +98,7 @@ export default function TeamBoard() {
                 <th className="text-left px-5 py-3.5 label hidden sm:table-cell">7-day score</th>
                 <th className="text-center px-4 py-3.5 label">Streak</th>
                 <th className="text-right px-5 py-3.5 label">Today</th>
+                <th className="px-5 py-3.5 label"></th>
               </tr>
             </thead>
             <tbody>
@@ -146,6 +149,17 @@ export default function TeamBoard() {
                         </span>
                       </div>
                     </td>
+
+                    {/* Coach button */}
+                    <td className="px-5 py-4">
+                      <button
+                        onClick={() => setCoaching({ id: m.userId, name: m.name })}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-800/50
+                          bg-indigo-950/30 text-indigo-400 hover:bg-indigo-950/60 hover:border-indigo-700
+                          transition-colors whitespace-nowrap">
+                        Coach →
+                      </button>
+                    </td>
                   </tr>
                 )
               })}
@@ -153,6 +167,14 @@ export default function TeamBoard() {
           </table>
         )}
       </div>
+
+      {coaching && (
+        <CoachingPanel
+          leaderId={coaching.id}
+          leaderName={coaching.name}
+          onClose={() => setCoaching(null)}
+        />
+      )}
     </main>
   )
 }

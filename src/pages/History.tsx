@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { daysApi, type DayEntry } from '../api'
 import StreakBadge from '../components/StreakBadge'
 import ScoreBar from '../components/ScoreBar'
+import CoachingBadge from '../components/CoachingBadge'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 const OUTCOME_COLOR: Record<string, string> = {
@@ -129,6 +130,7 @@ export default function History() {
                   </div>
                 ))}
               </div>
+              <CoachingBadge dayId={d.id} />
             </div>
           )
         })}

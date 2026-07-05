@@ -34,3 +34,17 @@ export const commitments = sqliteTable('commitments', {
   text: text('text').notNull(),
   outcome: text('outcome', { enum: ['hit', 'partial', 'miss'] }),
 })
+
+export const coachingNotes = sqliteTable('coaching_notes', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  dayId: integer('day_id').notNull(),
+  managerId: integer('manager_id').notNull(),
+  leaderId: integer('leader_id').notNull(),
+  focusArea: text('focus_area', {
+    enum: ['floor_presence', 'team_development', 'execution', 'customer_engagement', 'priority_setting'],
+  }).notNull(),
+  observation: text('observation').notNull(),
+  agreedActions: text('agreed_actions').notNull(),
+  followUpDate: text('follow_up_date'),   // YYYY-MM-DD, optional
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+})

@@ -48,6 +48,18 @@ sqlite.exec(`
     outcome TEXT
   );
 
+  CREATE TABLE IF NOT EXISTS coaching_notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    day_id INTEGER NOT NULL,
+    manager_id INTEGER NOT NULL,
+    leader_id INTEGER NOT NULL,
+    focus_area TEXT NOT NULL,
+    observation TEXT NOT NULL,
+    agreed_actions TEXT NOT NULL,
+    follow_up_date TEXT,
+    created_at INTEGER NOT NULL
+  );
+
   INSERT OR IGNORE INTO districts (id, name) VALUES (1, 'District 1');
 `)
 

@@ -76,3 +76,52 @@ export interface TeamMember {
 export const teamApi = {
   board: () => api.get<TeamMember[]>('/team'),
 }
+
+// ── Coaching ──────────────────────────────────────────────────────────────────
+export const FOCUS_AREA_LABELS: Record<string, string> = {
+  floor_presence:      'Floor Presence',
+  team_development:    'Team Development',
+  execution:           'Execution',
+  customer_engagement: 'Customer Engagement',
+  priority_setting:    'Priority Setting',
+}
+
+export type FocusArea = keyof typeof FOCUS_AREA_LABELS
+
+export interface CoachingNote {
+  id: number
+  dayId: number
+  managerId: number
+  leaderId: number
+  focusArea: FocusArea
+  observation: string
+  agreedActions: string
+  followUpDate: string | null
+  createdAt: string
+}
+
+export interface CoachingNoteWithDay extends CoachingNote {
+  dayDate: string | null
+  dayOutcome: 'hit' | 'partial' | 'miss' | null
+}
+
+export interface LeaderDay {
+  id: number
+  date: string
+  status: 'open' | 'paced' | 'closed'
+  overallOutcome: 'hit' | 'partial' | 'miss' | null
+  hasCoaching: boolean
+}
+
+export const coachingApi = {
+  create: (body: {
+    dayId: number; leaderId: number; focusArea: FocusArea
+    observation: string; agreedActions: string; followUpDate?: string
+  }) => api.post<CoachingNote>('/coaching', body),
+
+  forDay: (dayId: number) => api.get<CoachingNote>(`/coaching/day/${dayId}`),
+
+  forLeader: (leaderId: number) => api.get<CoachingNoteWithDay[]>(`/coaching/leader/${leaderId}`),
+
+  leaderDays: (leaderId: number) => api.get<LeaderDay[]>(`/coaching/leader/${leaderId}/days`),
+}

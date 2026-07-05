@@ -3,6 +3,7 @@ import cors from 'cors'
 import authRouter from './routes/auth'
 import daysRouter from './routes/days'
 import teamRouter from './routes/team'
+import coachingRouter from './routes/coaching'
 
 // Initialize DB on startup
 import './db'
@@ -16,6 +17,7 @@ app.use(express.json())
 app.use('/auth', authRouter)
 app.use('/days', daysRouter)
 app.use('/team', teamRouter)
+app.use('/coaching', coachingRouter)
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
 
