@@ -6,7 +6,7 @@ import CoachingBadge from '../components/CoachingBadge'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 const OUTCOME_COLOR: Record<string, string> = {
-  hit: '#6366f1',
+  hit: '#4f46e5',
   partial: '#f59e0b',
   miss: '#ef4444',
 }
@@ -38,7 +38,7 @@ export default function History() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-5 h-5 border-2 border-zinc-700 border-t-indigo-400 rounded-full animate-spin" />
+      <div className="w-5 h-5 border-2 border-gray-200 border-t-indigo-500 rounded-full animate-spin" />
     </div>
   )
 
@@ -47,7 +47,7 @@ export default function History() {
 
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
-        <h1 className="text-xl font-bold text-white">History</h1>
+        <h1 className="text-xl font-bold text-gray-900">History</h1>
         <StreakBadge streak={streak} />
       </div>
 
@@ -55,12 +55,12 @@ export default function History() {
       <div className="card p-6 space-y-5">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="font-semibold text-white">7-Day Score</h2>
-            <p className="text-zinc-500 text-xs mt-0.5">hit = 2 pts · partial = 1 · miss = 0</p>
+            <h2 className="font-semibold text-gray-900">7-Day Score</h2>
+            <p className="text-gray-400 text-xs mt-0.5">hit = 2 pts · partial = 1 · miss = 0</p>
           </div>
           <span className={`text-2xl font-bold tabular-nums
-            ${score >= 10 ? 'text-indigo-400' : score >= 6 ? 'text-amber-400' : 'text-red-400'}`}>
-            {score}<span className="text-zinc-700 text-base">/14</span>
+            ${score >= 10 ? 'text-indigo-600' : score >= 6 ? 'text-amber-500' : 'text-red-500'}`}>
+            {score}<span className="text-gray-300 text-base">/14</span>
           </span>
         </div>
         <ScoreBar score={score} max={14} />
@@ -68,17 +68,17 @@ export default function History() {
         {chartData.length > 0 && (
           <ResponsiveContainer width="100%" height={90}>
             <BarChart data={chartData} margin={{ top: 4, right: 0, bottom: 0, left: 0 }} barSize={28}>
-              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#52525b' }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
               <YAxis hide domain={[0, 2]} />
               <Tooltip
-                cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-                contentStyle={{ background: '#18181b', border: '1px solid #3f3f46', borderRadius: '10px', fontSize: '12px', color: '#e4e4e7' }}
+                cursor={{ fill: 'rgba(0,0,0,0.04)' }}
+                contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '12px', color: '#374151' }}
                 formatter={(v, _, props) => [`${v} pt${v !== 1 ? 's' : ''} — ${OUTCOME_LABEL[props.payload.outcome] ?? ''}`, '']}
-                labelStyle={{ color: '#71717a', marginBottom: 2 }}
+                labelStyle={{ color: '#9ca3af', marginBottom: 2 }}
               />
               <Bar dataKey="pts" radius={[5, 5, 0, 0]} isAnimationActive={false}>
                 {chartData.map((d, i) => (
-                  <Cell key={i} fill={OUTCOME_COLOR[d.outcome] ?? '#3f3f46'} fillOpacity={0.85} />
+                  <Cell key={i} fill={OUTCOME_COLOR[d.outcome] ?? '#e5e7eb'} fillOpacity={0.85} />
                 ))}
               </Bar>
             </BarChart>
@@ -86,7 +86,7 @@ export default function History() {
         )}
 
         {chartData.length === 0 && (
-          <p className="text-center text-zinc-600 text-sm py-4">No closed days yet</p>
+          <p className="text-center text-gray-400 text-sm py-4">No closed days yet</p>
         )}
       </div>
 
@@ -99,22 +99,22 @@ export default function History() {
           return (
             <div key={d.id} className="card-hover p-4">
               <div className="flex items-center justify-between mb-2.5">
-                <span className="text-sm font-semibold text-zinc-200">{dateLabel}</span>
+                <span className="text-sm font-semibold text-gray-800">{dateLabel}</span>
                 <div className="flex items-center gap-2">
                   {d.status === 'closed' && d.overallOutcome ? (
                     <>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border
                         ${d.overallOutcome === 'hit'
-                          ? 'bg-indigo-950/70 text-indigo-300 border border-indigo-800/50'
+                          ? 'bg-indigo-50 text-indigo-600 border-indigo-200'
                           : d.overallOutcome === 'partial'
-                          ? 'bg-amber-950/70 text-amber-400 border border-amber-800/50'
-                          : 'bg-red-950/70 text-red-400 border border-red-800/50'}`}>
+                          ? 'bg-amber-50 text-amber-600 border-amber-200'
+                          : 'bg-red-50 text-red-500 border-red-200'}`}>
                         {OUTCOME_LABEL[d.overallOutcome]}
                       </span>
-                      <span className="text-[11px] text-zinc-600 tabular-nums">+{d.scorePoints} pts</span>
+                      <span className="text-[11px] text-gray-400 tabular-nums">+{d.scorePoints} pts</span>
                     </>
                   ) : (
-                    <span className="text-xs text-zinc-600 capitalize">{d.status}</span>
+                    <span className="text-xs text-gray-400 capitalize">{d.status}</span>
                   )}
                 </div>
               </div>
@@ -122,11 +122,11 @@ export default function History() {
                 {d.commitments.map(c => (
                   <div key={c.id} className="flex items-center gap-2.5 text-xs">
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0
-                      ${c.outcome === 'hit' ? 'bg-indigo-400'
+                      ${c.outcome === 'hit' ? 'bg-indigo-500'
                         : c.outcome === 'partial' ? 'bg-amber-500'
                         : c.outcome === 'miss' ? 'bg-red-500'
-                        : 'bg-zinc-700'}`} />
-                    <span className="text-zinc-400">{c.text}</span>
+                        : 'bg-gray-300'}`} />
+                    <span className="text-gray-500">{c.text}</span>
                   </div>
                 ))}
               </div>
@@ -136,8 +136,8 @@ export default function History() {
         })}
         {days.length === 0 && (
           <div className="card p-10 text-center">
-            <p className="text-zinc-500 text-sm">No days logged yet.</p>
-            <p className="text-zinc-600 text-xs mt-1">Head to Today to start your first day.</p>
+            <p className="text-gray-500 text-sm">No days logged yet.</p>
+            <p className="text-gray-400 text-xs mt-1">Head to Today to start your first day.</p>
           </div>
         )}
       </div>

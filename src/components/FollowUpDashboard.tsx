@@ -4,21 +4,21 @@ import { coachingApi, FOCUS_AREA_LABELS, type FollowUpItem } from '../api'
 const URGENCY_CONFIG = {
   overdue: {
     label: 'Overdue',
-    bg: 'bg-red-950/30 border-red-800/40',
-    badge: 'bg-red-950/60 border-red-800/50 text-red-300',
-    dot: 'bg-red-500',
+    bg: 'bg-red-50 border-red-200',
+    badge: 'bg-red-100 border-red-200 text-red-600',
+    dot: 'bg-red-400',
   },
   today: {
     label: 'Due today',
-    bg: 'bg-amber-950/25 border-amber-800/30',
-    badge: 'bg-amber-950/60 border-amber-800/50 text-amber-300',
+    bg: 'bg-amber-50 border-amber-200',
+    badge: 'bg-amber-100 border-amber-200 text-amber-700',
     dot: 'bg-amber-400',
   },
   upcoming: {
     label: 'Upcoming',
-    bg: 'bg-zinc-900 border-zinc-800',
-    badge: 'bg-zinc-800 border-zinc-700 text-zinc-400',
-    dot: 'bg-zinc-500',
+    bg: 'bg-white border-gray-100',
+    badge: 'bg-gray-100 border-gray-200 text-gray-500',
+    dot: 'bg-gray-300',
   },
 }
 
@@ -48,7 +48,7 @@ function ResolveForm({ noteId, onResolved }: ResolveFormProps) {
   }
 
   return (
-    <form onSubmit={submit} className="mt-3 pt-3 border-t border-zinc-800/60 space-y-2">
+    <form onSubmit={submit} className="mt-3 pt-3 border-t border-gray-100 space-y-2">
       <label className="label block mb-1.5">Resolution note</label>
       <textarea
         rows={2}
@@ -57,7 +57,7 @@ function ResolveForm({ noteId, onResolved }: ResolveFormProps) {
         placeholder="What was discussed or observed at follow-up?"
         className="input resize-none text-xs leading-relaxed"
       />
-      {error && <p className="text-red-400 text-xs">{error}</p>}
+      {error && <p className="text-red-500 text-xs">{error}</p>}
       <button type="submit" disabled={saving}
         className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500
           disabled:opacity-40 text-white transition-colors">
@@ -98,32 +98,32 @@ export default function FollowUpDashboard() {
       {/* Header */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-zinc-800/30 transition-colors">
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
         <div className="flex items-center gap-3">
-          <span className="font-semibold text-white text-sm">Follow-ups</span>
+          <span className="font-semibold text-gray-900 text-sm">Follow-ups</span>
           <div className="flex gap-1.5">
             {overdue.length > 0 && (
-              <span className="text-[11px] font-bold bg-red-950/60 border border-red-800/50 text-red-300 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold bg-red-100 border border-red-200 text-red-600 px-2 py-0.5 rounded-full">
                 {overdue.length} overdue
               </span>
             )}
             {today.length > 0 && (
-              <span className="text-[11px] font-bold bg-amber-950/60 border border-amber-800/50 text-amber-300 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold bg-amber-100 border border-amber-200 text-amber-700 px-2 py-0.5 rounded-full">
                 {today.length} due today
               </span>
             )}
             {upcoming.length > 0 && (
-              <span className="text-[11px] font-bold bg-zinc-800 border border-zinc-700 text-zinc-400 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold bg-gray-100 border border-gray-200 text-gray-500 px-2 py-0.5 rounded-full">
                 {upcoming.length} upcoming
               </span>
             )}
           </div>
         </div>
-        <span className={`text-zinc-500 transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
+        <span className={`text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
       </button>
 
       {open && (
-        <div className="border-t border-zinc-800 divide-y divide-zinc-800/60">
+        <div className="border-t border-gray-100 divide-y divide-gray-100">
           {items.map(item => {
             const cfg = URGENCY_CONFIG[item.urgency]
             const isResolving = resolving === item.id
@@ -134,15 +134,15 @@ export default function FollowUpDashboard() {
                     <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${cfg.dot}`} />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                        <span className="text-sm font-semibold text-white">{item.leaderName}</span>
+                        <span className="text-sm font-semibold text-gray-900">{item.leaderName}</span>
                         <span className={`text-[10px] font-semibold border px-1.5 py-0.5 rounded-full ${cfg.badge}`}>
                           {cfg.label}
                         </span>
-                        <span className="text-[10px] bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 px-1.5 py-0.5 rounded-full">
+                        <span className="text-[10px] bg-gray-100 border border-gray-200 text-gray-500 px-1.5 py-0.5 rounded-full">
                           {FOCUS_AREA_LABELS[item.focusArea]}
                         </span>
                       </div>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-gray-400">
                         Coaching from {item.dayDate
                           ? new Date(item.dayDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
                           : '—'}
@@ -150,7 +150,7 @@ export default function FollowUpDashboard() {
                           ? new Date(item.followUpDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
                           : '—'}
                       </p>
-                      <p className="text-xs text-zinc-400 mt-1 line-clamp-1">{item.agreedActions}</p>
+                      <p className="text-xs text-gray-500 mt-1 line-clamp-1">{item.agreedActions}</p>
                     </div>
                   </div>
 
@@ -158,8 +158,8 @@ export default function FollowUpDashboard() {
                     onClick={() => setResolving(isResolving ? null : item.id)}
                     className={`text-xs font-semibold px-3 py-1.5 rounded-lg border shrink-0 transition-colors
                       ${isResolving
-                        ? 'border-zinc-600 bg-zinc-800 text-zinc-300'
-                        : 'border-indigo-800/50 bg-indigo-950/30 text-indigo-400 hover:bg-indigo-950/60'}`}>
+                        ? 'border-gray-300 bg-gray-100 text-gray-600'
+                        : 'border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-100'}`}>
                     {isResolving ? 'Cancel' : 'Resolve →'}
                   </button>
                 </div>

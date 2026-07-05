@@ -4,6 +4,23 @@ import {
   type FocusArea, type CoachingNote, type LeaderDay, type CoachingNoteWithDay,
 } from '../api'
 
+const FOCUS_OPTIONS = Object.entries(FOCUS_AREA_LABELS) as [FocusArea, string][]
+
+const OUTCOME_COLOR: Record<string, string> = {
+  hit: 'text-blue-600', partial: 'text-amber-600', miss: 'text-red-500',
+}
+const OUTCOME_DOT: Record<string, string> = {
+  hit: 'bg-blue-500', partial: 'bg-amber-400', miss: 'bg-red-500',
+}
+
+interface Props {
+  leaderId: number
+  leaderName: string
+  onClose: () => void
+}
+
+type Tab = 'log' | 'history'
+
 function HistoryResolveForm({ noteId, onResolved }: { noteId: number; onResolved: () => void }) {
   const [text, setText] = useState('')
   const [saving, setSaving] = useState(false)
@@ -25,7 +42,7 @@ function HistoryResolveForm({ noteId, onResolved }: { noteId: number; onResolved
   }
 
   return (
-    <form onSubmit={submit} className="mt-3 pt-3 border-t border-zinc-800/60 space-y-2">
+    <form onSubmit={submit} className="mt-3 pt-3 border-t border-gray-100 space-y-2">
       <label className="label block mb-1">Resolution note</label>
       <textarea
         rows={2}
@@ -34,7 +51,7 @@ function HistoryResolveForm({ noteId, onResolved }: { noteId: number; onResolved
         placeholder="What was discussed or observed at follow-up?"
         className="input resize-none text-xs leading-relaxed"
       />
-      {error && <p className="text-red-400 text-xs">{error}</p>}
+      {error && <p className="text-red-500 text-xs">{error}</p>}
       <button type="submit" disabled={saving}
         className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500
           disabled:opacity-40 text-white transition-colors">
@@ -43,23 +60,6 @@ function HistoryResolveForm({ noteId, onResolved }: { noteId: number; onResolved
     </form>
   )
 }
-
-const FOCUS_OPTIONS = Object.entries(FOCUS_AREA_LABELS) as [FocusArea, string][]
-
-const OUTCOME_COLOR: Record<string, string> = {
-  hit: 'text-blue-400', partial: 'text-amber-400', miss: 'text-red-400',
-}
-const OUTCOME_DOT: Record<string, string> = {
-  hit: 'bg-blue-400', partial: 'bg-amber-400', miss: 'bg-red-500',
-}
-
-interface Props {
-  leaderId: number
-  leaderName: string
-  onClose: () => void
-}
-
-type Tab = 'log' | 'history'
 
 export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) {
   const [tab, setTab] = useState<Tab>('log')
@@ -105,7 +105,7 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
           followUpDate: note.followUpDate ?? '',
         })
       })
-      .catch(() => {}) // 404 is fine — no note yet
+      .catch(() => {})
   }, [selectedDayId])
 
   async function save() {
@@ -127,7 +127,6 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
       setExistingNote(note)
       setSaved(true)
       setTimeout(() => setSaved(false), 2500)
-      // Refresh history and mark day as coached
       const [days, notes] = await Promise.all([
         coachingApi.leaderDays(leaderId),
         coachingApi.forLeader(leaderId),
@@ -141,38 +140,36 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
     }
   }
 
-  const selectedDay = leaderDays.find(d => d.id === selectedDayId)
-
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" onClick={onClose} />
 
       {/* Panel */}
-      <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-zinc-950 border-l border-zinc-800 z-50
+      <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-white border-l border-gray-200 z-50
         flex flex-col shadow-2xl overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-800">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
           <div>
             <p className="label">Coaching</p>
-            <h2 className="font-bold text-white text-lg mt-0.5">{leaderName}</h2>
+            <h2 className="font-bold text-gray-900 text-lg mt-0.5">{leaderName}</h2>
           </div>
           <button onClick={onClose}
-            className="w-8 h-8 rounded-lg hover:bg-zinc-800 flex items-center justify-center
-              text-zinc-500 hover:text-zinc-200 transition-colors text-lg">
+            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center
+              text-gray-400 hover:text-gray-700 transition-colors text-lg">
             ×
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-zinc-800 px-6">
+        <div className="flex border-b border-gray-100 px-6">
           {(['log', 'history'] as Tab[]).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`relative pb-3 pt-3 mr-6 text-sm font-medium transition-colors capitalize
-                ${tab === t ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}>
+                ${tab === t ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>
               {t === 'log' ? 'Log coaching' : `History (${history.length})`}
-              {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-400 rounded-full" />}
+              {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-full" />}
             </button>
           ))}
         </div>
@@ -180,7 +177,7 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center h-40">
-              <div className="w-5 h-5 border-2 border-zinc-700 border-t-indigo-400 rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-gray-200 border-t-indigo-500 rounded-full animate-spin" />
             </div>
           ) : tab === 'log' ? (
             <div className="p-6 space-y-5">
@@ -189,7 +186,7 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
               <div>
                 <label className="label mb-2 block">Select a day to coach</label>
                 {leaderDays.length === 0 ? (
-                  <p className="text-zinc-600 text-sm">No days logged yet.</p>
+                  <p className="text-gray-400 text-sm">No days logged yet.</p>
                 ) : (
                   <div className="space-y-1.5">
                     {leaderDays.map(d => (
@@ -197,13 +194,13 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border
                           text-sm transition-colors text-left
                           ${selectedDayId === d.id
-                            ? 'border-indigo-600/60 bg-indigo-950/30 text-white'
-                            : 'border-zinc-800 hover:border-zinc-700 text-zinc-400'}`}>
+                            ? 'border-indigo-300 bg-indigo-50 text-gray-900'
+                            : 'border-gray-200 hover:border-gray-300 text-gray-600 bg-white'}`}>
                         <div className="flex items-center gap-3">
                           {d.overallOutcome ? (
                             <span className={`w-2 h-2 rounded-full shrink-0 ${OUTCOME_DOT[d.overallOutcome]}`} />
                           ) : (
-                            <span className="w-2 h-2 rounded-full shrink-0 bg-zinc-700" />
+                            <span className="w-2 h-2 rounded-full shrink-0 bg-gray-300" />
                           )}
                           <span className="font-medium">
                             {new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', {
@@ -216,12 +213,12 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                             </span>
                           )}
                           {d.status !== 'closed' && (
-                            <span className="text-xs text-zinc-600 capitalize">{d.status}</span>
+                            <span className="text-xs text-gray-400 capitalize">{d.status}</span>
                           )}
                         </div>
                         {d.hasCoaching && (
-                          <span className="text-[10px] bg-indigo-950/60 border border-indigo-800/50
-                            text-indigo-400 px-2 py-0.5 rounded-full font-semibold">
+                          <span className="text-[10px] bg-indigo-50 border border-indigo-200
+                            text-indigo-600 px-2 py-0.5 rounded-full font-semibold">
                             Coached
                           </span>
                         )}
@@ -234,8 +231,8 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
               {selectedDayId && (
                 <>
                   {existingNote && (
-                    <div className="flex items-center gap-2 bg-indigo-950/30 border border-indigo-800/40
-                      text-indigo-400 text-xs px-3 py-2.5 rounded-xl">
+                    <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-200
+                      text-indigo-600 text-xs px-3 py-2.5 rounded-xl">
                       <span>✓</span> Coaching note exists — editing will update it.
                     </div>
                   )}
@@ -248,8 +245,8 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                         <button key={value} onClick={() => setForm(f => ({ ...f, focusArea: value }))}
                           className={`px-3 py-2.5 rounded-xl border text-sm font-medium text-left transition-colors
                             ${form.focusArea === value
-                              ? 'border-indigo-600/60 bg-indigo-950/30 text-indigo-300'
-                              : 'border-zinc-800 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300'}`}>
+                              ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+                              : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-800 bg-white'}`}>
                           {label}
                         </button>
                       ))}
@@ -259,7 +256,7 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                   {/* Observation */}
                   <div>
                     <label className="label mb-2 block">Observation</label>
-                    <p className="text-zinc-600 text-xs mb-2">What specific behavior or outcome did you observe?</p>
+                    <p className="text-gray-400 text-xs mb-2">What specific behavior or outcome did you observe?</p>
                     <textarea
                       rows={3}
                       value={form.observation}
@@ -272,7 +269,7 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                   {/* Agreed actions */}
                   <div>
                     <label className="label mb-2 block">Agreed actions</label>
-                    <p className="text-zinc-600 text-xs mb-2">What did you both commit to going forward?</p>
+                    <p className="text-gray-400 text-xs mb-2">What did you both commit to going forward?</p>
                     <textarea
                       rows={3}
                       value={form.agreedActions}
@@ -284,7 +281,7 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
 
                   {/* Follow-up date */}
                   <div>
-                    <label className="label mb-2 block">Follow-up date <span className="text-zinc-700 normal-case font-normal">(optional)</span></label>
+                    <label className="label mb-2 block">Follow-up date <span className="text-gray-400 normal-case font-normal">(optional)</span></label>
                     <input
                       type="date"
                       value={form.followUpDate}
@@ -294,14 +291,14 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                   </div>
 
                   {error && (
-                    <div className="flex items-center gap-2 bg-red-950/50 border border-red-800/60
-                      text-red-400 text-xs px-3 py-2.5 rounded-xl">
+                    <div className="flex items-center gap-2 bg-red-50 border border-red-200
+                      text-red-600 text-xs px-3 py-2.5 rounded-xl">
                       <span>⚠</span> {error}
                     </div>
                   )}
 
                   <button onClick={save} disabled={saving}
-                    className={`btn-primary transition-all ${saved ? '!bg-blue-700' : ''}`}>
+                    className={`btn-primary transition-all ${saved ? '!bg-blue-600' : ''}`}>
                     {saving ? 'Saving…' : saved ? '✓ Saved' : existingNote ? 'Update coaching note' : 'Save coaching note'}
                   </button>
                 </>
@@ -312,16 +309,16 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
             <div className="p-6 space-y-3">
               {history.length === 0 ? (
                 <div className="text-center py-10">
-                  <p className="text-zinc-500 text-sm">No coaching notes yet for {leaderName}.</p>
+                  <p className="text-gray-400 text-sm">No coaching notes yet for {leaderName}.</p>
                 </div>
               ) : history.map(n => (
-                <div key={n.id} className="card p-4 space-y-3">
+                <div key={n.id} className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3 shadow-sm">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-xs font-semibold text-indigo-300">
+                      <p className="text-xs font-semibold text-indigo-600">
                         {FOCUS_AREA_LABELS[n.focusArea]}
                       </p>
-                      <p className="text-xs text-zinc-500 mt-0.5">
+                      <p className="text-xs text-gray-400 mt-0.5">
                         {n.dayDate
                           ? new Date(n.dayDate + 'T00:00:00').toLocaleDateString('en-US', {
                               weekday: 'short', month: 'short', day: 'numeric',
@@ -337,8 +334,8 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                     {n.followUpDate && (
                       <span className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 border
                         ${n.followUpStatus === 'complete'
-                          ? 'bg-blue-950/60 border-blue-800/50 text-blue-400'
-                          : 'bg-zinc-800 border-zinc-700 text-zinc-400'}`}>
+                          ? 'bg-blue-50 border-blue-200 text-blue-600'
+                          : 'bg-gray-100 border-gray-200 text-gray-500'}`}>
                         {n.followUpStatus === 'complete' ? '✓ Resolved' : (
                           <>Follow-up: {new Date(n.followUpDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</>
                         )}
@@ -348,16 +345,16 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                   <div className="space-y-2.5">
                     <div>
                       <p className="label mb-1">Observation</p>
-                      <p className="text-sm text-zinc-300 leading-relaxed">{n.observation}</p>
+                      <p className="text-sm text-gray-700 leading-relaxed">{n.observation}</p>
                     </div>
                     <div>
                       <p className="label mb-1">Agreed actions</p>
-                      <p className="text-sm text-zinc-300 leading-relaxed">{n.agreedActions}</p>
+                      <p className="text-sm text-gray-700 leading-relaxed">{n.agreedActions}</p>
                     </div>
                     {n.followUpStatus === 'complete' && n.followUpResolution && (
                       <div>
                         <p className="label mb-1">Resolution</p>
-                        <p className="text-sm text-blue-300/80 leading-relaxed">{n.followUpResolution}</p>
+                        <p className="text-sm text-blue-700 leading-relaxed">{n.followUpResolution}</p>
                       </div>
                     )}
                   </div>
@@ -375,8 +372,8 @@ export default function CoachingPanel({ leaderId, leaderName, onClose }: Props) 
                     ) : (
                       <button
                         onClick={() => setResolving(n.id)}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-800/50
-                          bg-indigo-950/30 text-indigo-400 hover:bg-indigo-950/60 transition-colors">
+                        className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-200
+                          bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
                         Resolve →
                       </button>
                     )

@@ -6,9 +6,9 @@ import FollowUpBanner from '../components/FollowUpBanner'
 type Outcome = 'hit' | 'partial' | 'miss'
 
 const OUTCOME_CONFIG: Record<Outcome, { icon: string; active: string; label: string }> = {
-  hit:     { icon: '✓', active: 'bg-blue-600 border-blue-500 text-white',    label: 'Hit' },
-  partial: { icon: '~', active: 'bg-amber-600 border-amber-500 text-white',  label: 'Partial' },
-  miss:    { icon: '✕', active: 'bg-red-700 border-red-600 text-white',       label: 'Miss' },
+  hit:     { icon: '✓', active: 'bg-blue-600 border-blue-500 text-white',     label: 'Hit' },
+  partial: { icon: '~', active: 'bg-amber-500 border-amber-400 text-white',   label: 'Partial' },
+  miss:    { icon: '✕', active: 'bg-red-600 border-red-500 text-white',        label: 'Miss' },
 }
 
 function OutcomePicker({ value, onChange, size = 'sm' }: {
@@ -24,7 +24,7 @@ function OutcomePicker({ value, onChange, size = 'sm' }: {
             ${size === 'md' ? 'px-4 py-2 text-sm' : 'px-2.5 py-1 text-xs'}
             ${value === o
               ? cfg.active
-              : 'border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300 bg-zinc-800/40'
+              : 'border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-700 bg-white'
             }`}>
           <span className="mr-1 opacity-70">{cfg.icon}</span>{cfg.label}
         </button>
@@ -39,8 +39,8 @@ function Section({ title, subtitle, children }: {
   return (
     <div className="card p-6 space-y-5">
       <div>
-        <h2 className="font-semibold text-white">{title}</h2>
-        {subtitle && <p className="text-zinc-500 text-xs mt-0.5">{subtitle}</p>}
+        <h2 className="font-semibold text-gray-900">{title}</h2>
+        {subtitle && <p className="text-gray-500 text-xs mt-0.5">{subtitle}</p>}
       </div>
       {children}
     </div>
@@ -103,7 +103,7 @@ export default function Today() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-5 h-5 border-2 border-zinc-700 border-t-indigo-400 rounded-full animate-spin" />
+      <div className="w-5 h-5 border-2 border-gray-200 border-t-indigo-500 rounded-full animate-spin" />
     </div>
   )
 
@@ -113,8 +113,8 @@ export default function Today() {
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h1 className="text-xl font-bold text-white">Today</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">{today}</p>
+          <h1 className="text-xl font-bold text-gray-900">Today</h1>
+          <p className="text-gray-500 text-sm mt-0.5">{today}</p>
         </div>
         {day && <StreakBadge streak={day.streak} />}
       </div>
@@ -122,7 +122,7 @@ export default function Today() {
       <FollowUpBanner />
 
       {error && (
-        <div className="flex items-center gap-2 bg-red-950/40 border border-red-800/50 text-red-400 text-sm px-4 py-3 rounded-xl">
+        <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">
           <span>⚠</span> {error}
         </div>
       )}
@@ -142,7 +142,7 @@ export default function Today() {
               <div className="space-y-2">
                 {texts.map((t, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full border border-zinc-700 text-zinc-600 text-xs
+                    <span className="w-5 h-5 rounded-full border border-gray-300 text-gray-400 text-xs
                       flex items-center justify-center shrink-0 font-medium">{i + 1}</span>
                     <input value={t}
                       onChange={e => setTexts(prev => prev.map((v, j) => j === i ? e.target.value : v))}
@@ -168,8 +168,8 @@ export default function Today() {
               {day.commitments.map(c => (
                 <div key={c.id} className="space-y-2">
                   <div className="flex items-start gap-2">
-                    <span className="w-1 h-1 rounded-full bg-zinc-600 mt-2 shrink-0" />
-                    <span className="text-sm text-zinc-200 leading-snug">{c.text}</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-400 mt-2 shrink-0" />
+                    <span className="text-sm text-gray-700 leading-snug">{c.text}</span>
                   </div>
                   <div className="pl-3">
                     <OutcomePicker value={commitOutcomes[c.id] ?? null}
@@ -194,7 +194,7 @@ export default function Today() {
           {day.status === 'paced' && (
             <Section title="End-of-Day Close" subtitle="Wrap up and log your overall outcome">
               {day.paceNote && (
-                <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl px-4 py-3 text-sm text-zinc-400 italic">
+                <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500 italic">
                   "{day.paceNote}"
                 </div>
               )}
@@ -212,18 +212,18 @@ export default function Today() {
       {day?.status === 'closed' && (
         <div className="card overflow-hidden">
           {/* Outcome banner */}
-          <div className={`px-6 py-4 border-b border-zinc-800 flex items-center justify-between
+          <div className={`px-6 py-4 border-b border-gray-100 flex items-center justify-between
             ${day.overallOutcome === 'hit'
-              ? 'bg-blue-950/40'
+              ? 'bg-blue-50'
               : day.overallOutcome === 'partial'
-              ? 'bg-amber-950/40'
-              : 'bg-red-950/30'}`}>
+              ? 'bg-amber-50'
+              : 'bg-red-50'}`}>
             <div>
               <p className="label mb-0.5">Today's result</p>
               <p className={`text-lg font-bold capitalize
-                ${day.overallOutcome === 'hit' ? 'text-blue-300'
-                  : day.overallOutcome === 'partial' ? 'text-amber-300'
-                  : 'text-red-400'}`}>
+                ${day.overallOutcome === 'hit' ? 'text-blue-700'
+                  : day.overallOutcome === 'partial' ? 'text-amber-700'
+                  : 'text-red-600'}`}>
                 {OUTCOME_CONFIG[day.overallOutcome!]?.icon} {day.overallOutcome}
               </p>
             </div>
@@ -237,17 +237,17 @@ export default function Today() {
               <div key={c.id} className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5 flex-1 min-w-0">
                   <span className={`w-1.5 h-1.5 rounded-full shrink-0
-                    ${c.outcome === 'hit' ? 'bg-blue-400'
-                      : c.outcome === 'partial' ? 'bg-amber-400'
-                      : c.outcome === 'miss' ? 'bg-red-400'
-                      : 'bg-zinc-600'}`} />
-                  <span className="text-sm text-zinc-300 truncate">{c.text}</span>
+                    ${c.outcome === 'hit' ? 'bg-blue-500'
+                      : c.outcome === 'partial' ? 'bg-amber-500'
+                      : c.outcome === 'miss' ? 'bg-red-500'
+                      : 'bg-gray-300'}`} />
+                  <span className="text-sm text-gray-700 truncate">{c.text}</span>
                 </div>
                 <span className={`text-xs font-semibold capitalize shrink-0
-                  ${c.outcome === 'hit' ? 'text-blue-400'
-                    : c.outcome === 'partial' ? 'text-amber-400'
-                    : c.outcome === 'miss' ? 'text-red-400'
-                    : 'text-zinc-600'}`}>
+                  ${c.outcome === 'hit' ? 'text-blue-600'
+                    : c.outcome === 'partial' ? 'text-amber-600'
+                    : c.outcome === 'miss' ? 'text-red-500'
+                    : 'text-gray-400'}`}>
                   {c.outcome ?? '—'}
                 </span>
               </div>
@@ -256,9 +256,9 @@ export default function Today() {
 
           {/* Footer */}
           <div className="px-6 pb-5 flex items-center gap-4">
-            <span className="text-xs text-zinc-600">+{day.scorePoints} pts this day</span>
-            <span className="text-zinc-800">·</span>
-            <span className="text-xs text-zinc-600">Target: {day.dailyNumber?.toLocaleString()}</span>
+            <span className="text-xs text-gray-400">+{day.scorePoints} pts this day</span>
+            <span className="text-gray-300">·</span>
+            <span className="text-xs text-gray-400">Target: {day.dailyNumber?.toLocaleString()}</span>
           </div>
         </div>
       )}

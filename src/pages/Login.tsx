@@ -35,30 +35,25 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[#09090b]">
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px]
-          bg-indigo-500/6 rounded-full blur-3xl" />
-      </div>
-
-      <div className="w-full max-w-sm relative">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-gray-50">
+      <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-700
-            flex items-center justify-center mx-auto mb-4 shadow-xl shadow-indigo-900/40">
+          <div className="w-14 h-14 rounded-2xl bg-indigo-600
+            flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M3 17L8.5 10.5L12.5 14.5L20 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">FloorTracker</h1>
-          <p className="text-zinc-500 text-sm mt-1">Daily execution for floor leaders</p>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">FloorTracker</h1>
+          <p className="text-gray-500 text-sm mt-1">Daily execution for floor leaders</p>
         </div>
 
-        <div className="card p-6 space-y-4 shadow-2xl shadow-black/40">
-          <div className="flex rounded-xl overflow-hidden border border-zinc-800 p-0.5 gap-0.5 bg-zinc-800/40">
+        <div className="card p-6 space-y-4">
+          <div className="flex rounded-xl overflow-hidden border border-gray-200 p-0.5 gap-0.5 bg-gray-100">
             {(['login', 'register'] as Mode[]).map(m => (
               <button key={m} type="button" onClick={() => setMode(m)}
                 className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all
-                  ${mode === m ? 'bg-zinc-700 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}>
+                  ${mode === m ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                 {m === 'login' ? 'Sign in' : 'Register'}
               </button>
             ))}
@@ -101,7 +96,7 @@ export default function Login() {
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 bg-red-950/50 border border-red-800/60 text-red-400 text-xs px-3 py-2.5 rounded-xl">
+              <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-xs px-3 py-2.5 rounded-xl">
                 <span>⚠</span> {error}
               </div>
             )}
