@@ -56,8 +56,8 @@ export default function TeamBoard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Store Team Board</h1>
-          <p className="text-gray-400 text-xs mt-0.5">{members.length} leader{members.length !== 1 ? 's' : ''} · Store {user?.storeId}</p>
+          <h1 className="text-xl font-bold text-gray-900">Sales Team Board</h1>
+          <p className="text-gray-400 text-xs mt-0.5">{members.length} rep{members.length !== 1 ? 's' : ''} · Store {user?.storeId}</p>
         </div>
         <div className="flex gap-3 text-xs text-gray-500">
           <span><span className="text-blue-600 font-semibold">{on_track.length}</span> on track</span>
@@ -88,13 +88,13 @@ export default function TeamBoard() {
       <div className="card overflow-hidden">
         {members.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-gray-400 text-sm">No leaders in your store yet.</p>
+            <p className="text-gray-400 text-sm">No sales reps in your store yet.</p>
           </div>
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="text-left px-5 py-3.5 label">Leader</th>
+                <th className="text-left px-5 py-3.5 label">Sales Rep</th>
                 <th className="text-left px-5 py-3.5 label hidden sm:table-cell">7-day score</th>
                 <th className="text-center px-4 py-3.5 label">Streak</th>
                 <th className="text-right px-5 py-3.5 label">Today</th>

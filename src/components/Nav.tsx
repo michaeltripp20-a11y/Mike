@@ -21,7 +21,7 @@ export default function Nav() {
           {[
             { to: '/', label: 'Today', end: true },
             { to: '/history', label: 'History', end: false },
-            ...(user?.role === 'manager' ? [{ to: '/team', label: 'Team', end: false }] : []),
+            ...(user?.role === 'manager' ? [{ to: '/team', label: 'Sales Team', end: false }] : []),
           ].map(({ to, label, end }) => (
             <NavLink key={to} to={to} end={end}
               className={({ isActive }) =>
