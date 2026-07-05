@@ -8,12 +8,12 @@ import { JWT_SECRET } from '../middleware/auth'
 
 const router = Router()
 
-function makeToken(userId: number, role: 'leader' | 'manager', districtId: number) {
-  return jwt.sign({ userId, role, districtId }, JWT_SECRET, { expiresIn: '30d' })
+function makeToken(userId: number, role: 'leader' | 'manager', storeId: number) {
+  return jwt.sign({ userId, role, storeId }, JWT_SECRET, { expiresIn: '30d' })
 }
 
 router.post('/register', async (req, res) => {
-  const { name, email, password, role = 'leader', districtId = 1 } = req.body ?? {}
+  const { name, email, password, role = 'leader', storeId = 1 } = req.body ?? {}
   if (!name || !email || !password) {
     res.status(400).json({ error: 'name, email, and password are required' })
     return
@@ -24,9 +24,9 @@ router.post('/register', async (req, res) => {
     return
   }
   const passwordHash = await bcrypt.hash(password, 10)
-  const [user] = db.insert(users).values({ name, email, passwordHash, role, districtId, createdAt: new Date() }).returning().all()
-  const token = makeToken(user.id, user.role, user.districtId)
-  res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, districtId: user.districtId } })
+  const [user] = db.insert(users).values({ name, email, passwordHash, role, storeId, createdAt: new Date() }).returning().all()
+  const token = makeToken(user.id, user.role, user.storeId)
+  res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, storeId: user.storeId } })
 })
 
 router.post('/login', async (req, res) => {
@@ -40,8 +40,8 @@ router.post('/login', async (req, res) => {
     res.status(401).json({ error: 'Invalid credentials' })
     return
   }
-  const token = makeToken(user.id, user.role, user.districtId)
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, districtId: user.districtId } })
+  const token = makeToken(user.id, user.role, user.storeId)
+  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, storeId: user.storeId } })
 })
 
 export default router

@@ -19,7 +19,7 @@ function sevenDaysAgoStr() {
 
 router.get('/', (req, res) => {
   const leaders = db.select().from(users)
-    .where(and(eq(users.role, 'leader'), eq(users.districtId, req.jwtPayload.districtId)))
+    .where(and(eq(users.role, 'leader'), eq(users.storeId, req.jwtPayload.storeId)))
     .all()
 
   const today = todayStr()

@@ -12,7 +12,7 @@ export const db = drizzle(sqlite, { schema })
 
 // Run migrations inline (simple bootstrap)
 sqlite.exec(`
-  CREATE TABLE IF NOT EXISTS districts (
+  CREATE TABLE IF NOT EXISTS stores (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
   );
@@ -23,7 +23,7 @@ sqlite.exec(`
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'leader',
-    district_id INTEGER NOT NULL DEFAULT 1,
+    store_id INTEGER NOT NULL DEFAULT 1,
     created_at INTEGER NOT NULL
   );
 
@@ -63,17 +63,21 @@ sqlite.exec(`
     created_at INTEGER NOT NULL
   );
 
-  INSERT OR IGNORE INTO districts (id, name) VALUES (1, 'District 1');
+  INSERT OR IGNORE INTO stores (id, name) VALUES (1, 'Store 1');
 `)
 
-// Additive migrations — safe to re-run (ALTER TABLE is no-op if column already exists via try/catch)
-const addColumns = [
+// Additive migrations — safe to re-run (try/catch makes them idempotent)
+const migrations = [
+  // Follow-up columns
   "ALTER TABLE coaching_notes ADD COLUMN follow_up_status TEXT DEFAULT 'pending'",
   "ALTER TABLE coaching_notes ADD COLUMN follow_up_resolution TEXT",
   "ALTER TABLE coaching_notes ADD COLUMN resolved_at INTEGER",
+  // district → store rename
+  "ALTER TABLE districts RENAME TO stores",
+  "ALTER TABLE users RENAME COLUMN district_id TO store_id",
 ]
-for (const sql of addColumns) {
-  try { sqlite.exec(sql) } catch { /* already exists */ }
+for (const sql of migrations) {
+  try { sqlite.exec(sql) } catch { /* already applied */ }
 }
 
 export type DB = typeof db

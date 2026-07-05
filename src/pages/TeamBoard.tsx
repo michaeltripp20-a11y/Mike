@@ -57,8 +57,8 @@ export default function TeamBoard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">District Team Board</h1>
-          <p className="text-gray-400 text-xs mt-0.5">{members.length} leader{members.length !== 1 ? 's' : ''} · District {user?.districtId}</p>
+          <h1 className="text-xl font-bold text-gray-900">Store Team Board</h1>
+          <p className="text-gray-400 text-xs mt-0.5">{members.length} leader{members.length !== 1 ? 's' : ''} · Store {user?.storeId}</p>
         </div>
         <div className="flex gap-3 text-xs text-gray-500">
           <span><span className="text-blue-600 font-semibold">{on_track.length}</span> on track</span>
@@ -89,7 +89,7 @@ export default function TeamBoard() {
       <div className="card overflow-hidden">
         {members.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-gray-400 text-sm">No leaders in your district yet.</p>
+            <p className="text-gray-400 text-sm">No leaders in your store yet.</p>
           </div>
         ) : (
           <table className="w-full text-sm">

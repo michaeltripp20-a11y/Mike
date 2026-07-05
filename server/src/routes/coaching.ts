@@ -30,8 +30,8 @@ router.post('/', requireManager, (req, res) => {
   }
 
   const leader = db.select().from(users).where(eq(users.id, leaderId)).get()
-  if (!leader || leader.districtId !== req.jwtPayload.districtId) {
-    res.status(403).json({ error: 'Leader is not in your district' })
+  if (!leader || leader.storeId !== req.jwtPayload.storeId) {
+    res.status(403).json({ error: 'Leader is not in your store' })
     return
   }
 
@@ -70,14 +70,14 @@ router.get('/day/:dayId', (req, res) => {
   }
 
   // Leaders can only view their own; managers can view anyone in their district
-  const { userId, role, districtId } = req.jwtPayload
+  const { userId, role, storeId } = req.jwtPayload
   if (role === 'leader' && day.userId !== userId) {
     res.status(403).json({ error: 'Forbidden' })
     return
   }
   if (role === 'manager') {
     const leader = db.select().from(users).where(eq(users.id, day.userId)).get()
-    if (!leader || leader.districtId !== districtId) {
+    if (!leader || leader.storeId !== storeId) {
       res.status(403).json({ error: 'Forbidden' })
       return
     }
@@ -95,8 +95,8 @@ router.get('/day/:dayId', (req, res) => {
 router.get('/leader/:leaderId', requireManager, (req, res) => {
   const leaderId = Number(req.params.leaderId)
   const leader = db.select().from(users).where(eq(users.id, leaderId)).get()
-  if (!leader || leader.districtId !== req.jwtPayload.districtId) {
-    res.status(403).json({ error: 'Leader is not in your district' })
+  if (!leader || leader.storeId !== req.jwtPayload.storeId) {
+    res.status(403).json({ error: 'Leader is not in your store' })
     return
   }
 
@@ -118,8 +118,8 @@ router.get('/leader/:leaderId', requireManager, (req, res) => {
 router.get('/leader/:leaderId/days', requireManager, (req, res) => {
   const leaderId = Number(req.params.leaderId)
   const leader = db.select().from(users).where(eq(users.id, leaderId)).get()
-  if (!leader || leader.districtId !== req.jwtPayload.districtId) {
-    res.status(403).json({ error: 'Leader is not in your district' })
+  if (!leader || leader.storeId !== req.jwtPayload.storeId) {
+    res.status(403).json({ error: 'Leader is not in your store' })
     return
   }
 
@@ -144,7 +144,7 @@ router.get('/follow-ups', requireManager, (req, res) => {
 
   // All notes with a follow-up date in the manager's district
   const leaderIds = db.select({ id: users.id }).from(users)
-    .where(and(eq(users.role, 'leader'), eq(users.districtId, req.jwtPayload.districtId)))
+    .where(and(eq(users.role, 'leader'), eq(users.storeId, req.jwtPayload.storeId)))
     .all().map(u => u.id)
 
   if (!leaderIds.length) { res.json([]); return }
@@ -216,7 +216,7 @@ router.patch('/:id/resolve', requireManager, (req, res) => {
   if (!note) { res.status(404).json({ error: 'Not found' }); return }
 
   const leader = db.select().from(users).where(eq(users.id, note.leaderId)).get()
-  if (!leader || leader.districtId !== req.jwtPayload.districtId) {
+  if (!leader || leader.storeId !== req.jwtPayload.storeId) {
     res.status(403).json({ error: 'Forbidden' }); return
   }
 

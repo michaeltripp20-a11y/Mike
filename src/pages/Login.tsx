@@ -12,7 +12,7 @@ export default function Login() {
   const [form, setForm] = useState({
     name: '', email: '', password: '',
     role: 'leader' as 'leader' | 'manager',
-    districtId: 1,
+    storeId: 1,
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -73,13 +73,13 @@ export default function Login() {
                     <select className="input" value={form.role}
                       onChange={e => setForm(f => ({ ...f, role: e.target.value as 'leader' | 'manager' }))}>
                       <option value="leader">Floor Leader</option>
-                      <option value="manager">District Manager</option>
+                      <option value="manager">Store Manager</option>
                     </select>
                   </div>
                   <div className="w-24">
-                    <label className="label mb-1.5 block">District</label>
-                    <input className="input" placeholder="1" type="number" min={1} value={form.districtId}
-                      onChange={e => setForm(f => ({ ...f, districtId: Number(e.target.value) }))} required />
+                    <label className="label mb-1.5 block">Store</label>
+                    <input className="input" placeholder="1" type="number" min={1} value={form.storeId}
+                      onChange={e => setForm(f => ({ ...f, storeId: Number(e.target.value) }))} required />
                   </div>
                 </div>
               </>

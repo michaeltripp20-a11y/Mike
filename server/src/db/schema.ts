@@ -1,6 +1,6 @@
 import { sqliteTable, integer, text, real } from 'drizzle-orm/sqlite-core'
 
-export const districts = sqliteTable('districts', {
+export const stores = sqliteTable('stores', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
 })
@@ -11,7 +11,7 @@ export const users = sqliteTable('users', {
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
   role: text('role', { enum: ['leader', 'manager'] }).notNull().default('leader'),
-  districtId: integer('district_id').notNull().default(1),
+  storeId: integer('store_id').notNull().default(1),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 })
 

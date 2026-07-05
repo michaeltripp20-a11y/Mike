@@ -29,10 +29,10 @@ export const api = {
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export interface AuthPayload { token: string; user: User }
-export interface User { id: number; name: string; email: string; role: 'leader' | 'manager'; districtId: number }
+export interface User { id: number; name: string; email: string; role: 'leader' | 'manager'; storeId: number }
 
 export const authApi = {
-  register: (body: { name: string; email: string; password: string; role: 'leader' | 'manager'; districtId: number }) =>
+  register: (body: { name: string; email: string; password: string; role: 'leader' | 'manager'; storeId: number }) =>
     api.post<AuthPayload>('/auth/register', body),
   login: (body: { email: string; password: string }) =>
     api.post<AuthPayload>('/auth/login', body),

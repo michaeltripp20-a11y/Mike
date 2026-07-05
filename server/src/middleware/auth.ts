@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 export interface JwtPayload {
   userId: number
   role: 'leader' | 'manager'
-  districtId: number
+  storeId: number
 }
 
 declare global {
