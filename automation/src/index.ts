@@ -1,6 +1,7 @@
 import "dotenv/config";
 import cron from "node-cron";
 import { generateArticle } from "./generate";
+import { generateDailyNote, loadNotes, clearNotes } from "./notes";
 import { SubstackClient } from "./substack";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -12,19 +13,32 @@ if (!SUBSTACK_SESSION_COOKIE) throw new Error("Missing SUBSTACK_SESSION_COOKIE i
 
 const substack = new SubstackClient(SUBSTACK_PUBLICATION, SUBSTACK_SESSION_COOKIE);
 
-const recentTopics: string[] = [];
-
-async function runPost(): Promise<void> {
+// Daily at 8:00 AM ET — generate and save a note
+cron.schedule("0 8 * * *", async () => {
   const now = new Date().toISOString();
-  console.log(`\n[${now}] Starting post run...`);
-
+  console.log(`\n[${now}] Generating daily note...`);
   try {
-    console.log("[generate] Generating article with Claude...");
-    const article = await generateArticle(recentTopics);
-    console.log(`[generate] Article ready: "${article.title}" (topic: ${article.topic})`);
+    const note = await generateDailyNote();
+    console.log(`[notes] Note saved: "${note.theme}"`);
+  } catch (err) {
+    console.error("[error] Daily note failed:", err);
+  }
+}, { timezone: "America/New_York" });
 
-    recentTopics.push(article.topic);
-    if (recentTopics.length > 10) recentTopics.shift();
+// Every Friday at 9:00 AM ET — publish the weekly newsletter
+cron.schedule("0 9 * * 5", async () => {
+  const now = new Date().toISOString();
+  console.log(`\n[${now}] Starting weekly post...`);
+  try {
+    const notes = loadNotes();
+    if (notes.length === 0) {
+      console.log("[weekly] No notes collected yet — generating one now...");
+      await generateDailyNote();
+    }
+    const freshNotes = loadNotes();
+    console.log(`[weekly] Publishing from ${freshNotes.length} notes...`);
+    const article = await generateArticle(freshNotes);
+    console.log(`[weekly] Article: "${article.title}"`);
 
     await substack.createAndPublish({
       title: article.title,
@@ -32,14 +46,14 @@ async function runPost(): Promise<void> {
       body_html: article.body,
     });
 
-    console.log(`[done] Posted: "${article.title}"`);
+    clearNotes();
+    console.log("[weekly] Published and notes cleared.");
   } catch (err) {
-    console.error("[error] Post run failed:", err);
+    console.error("[error] Weekly post failed:", err);
   }
-}
+}, { timezone: "America/New_York" });
 
-// Every day at 9:00 AM
-cron.schedule("0 9 * * *", runPost, { timezone: "America/New_York" });
-
-console.log("Substack automation running. Posts scheduled daily at 9:00 AM ET.");
-console.log(`Publication: ${SUBSTACK_PUBLICATION}.substack.com`);
+console.log("The Floor Report automation running.");
+console.log("  - Daily notes: every day at 8:00 AM ET");
+console.log("  - Weekly newsletter: every Friday at 9:00 AM ET");
+console.log(`  - Publication: ${SUBSTACK_PUBLICATION}.substack.com`);
