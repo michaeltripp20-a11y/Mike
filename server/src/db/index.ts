@@ -66,4 +66,14 @@ sqlite.exec(`
   INSERT OR IGNORE INTO districts (id, name) VALUES (1, 'District 1');
 `)
 
+// Additive migrations — safe to re-run (ALTER TABLE is no-op if column already exists via try/catch)
+const addColumns = [
+  "ALTER TABLE coaching_notes ADD COLUMN follow_up_status TEXT DEFAULT 'pending'",
+  "ALTER TABLE coaching_notes ADD COLUMN follow_up_resolution TEXT",
+  "ALTER TABLE coaching_notes ADD COLUMN resolved_at INTEGER",
+]
+for (const sql of addColumns) {
+  try { sqlite.exec(sql) } catch { /* already exists */ }
+}
+
 export type DB = typeof db
