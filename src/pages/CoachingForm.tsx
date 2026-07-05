@@ -129,8 +129,8 @@ export default function CoachingForm() {
           ←
         </button>
         <div>
-          <p className="label">Coaching</p>
-          <h1 className="text-xl font-bold text-gray-900">{leaderName || 'Leader'}</h1>
+          <p className="label">Sales Rep Coaching</p>
+          <h1 className="text-xl font-bold text-gray-900">{leaderName || 'Sales Rep'}</h1>
         </div>
       </div>
 
@@ -151,7 +151,7 @@ export default function CoachingForm() {
 
           {/* Day picker */}
           <div className="card p-5">
-            <label className="label mb-3 block">Select a day to coach</label>
+            <label className="label mb-3 block">Select a day to review</label>
             {leaderDays.length === 0 ? (
               <p className="text-gray-400 text-sm">No days logged yet.</p>
             ) : (
@@ -241,7 +241,7 @@ export default function CoachingForm() {
                   rows={4}
                   value={form.agreedActions}
                   onChange={e => setForm(f => ({ ...f, agreedActions: e.target.value }))}
-                  placeholder="e.g. Leader will run a 5-minute team huddle each morning…"
+                  placeholder="e.g. Rep will run a 5-minute team huddle each morning…"
                   className="input resize-none leading-relaxed"
                 />
               </div>
@@ -281,7 +281,7 @@ export default function CoachingForm() {
         <div className="space-y-3">
           {history.length === 0 ? (
             <div className="card p-10 text-center">
-              <p className="text-gray-400 text-sm">No coaching notes yet for {leaderName || 'this leader'}.</p>
+              <p className="text-gray-400 text-sm">No coaching notes yet for {leaderName || 'this rep'}.</p>
             </div>
           ) : history.map(n => (
             <div key={n.id} className="card p-5 space-y-4">
