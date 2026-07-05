@@ -5,9 +5,9 @@ import StreakBadge from '../components/StreakBadge'
 type Outcome = 'hit' | 'partial' | 'miss'
 
 const OUTCOME_CONFIG: Record<Outcome, { icon: string; active: string; label: string }> = {
-  hit:     { icon: '✓', active: 'bg-emerald-600 border-emerald-500 text-white', label: 'Hit' },
-  partial: { icon: '~', active: 'bg-amber-600 border-amber-500 text-white',   label: 'Partial' },
-  miss:    { icon: '✕', active: 'bg-red-700 border-red-600 text-white',        label: 'Miss' },
+  hit:     { icon: '✓', active: 'bg-blue-600 border-blue-500 text-white',    label: 'Hit' },
+  partial: { icon: '~', active: 'bg-amber-600 border-amber-500 text-white',  label: 'Partial' },
+  miss:    { icon: '✕', active: 'bg-red-700 border-red-600 text-white',       label: 'Miss' },
 }
 
 function OutcomePicker({ value, onChange, size = 'sm' }: {
@@ -102,7 +102,7 @@ export default function Today() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-5 h-5 border-2 border-zinc-700 border-t-emerald-400 rounded-full animate-spin" />
+      <div className="w-5 h-5 border-2 border-zinc-700 border-t-indigo-400 rounded-full animate-spin" />
     </div>
   )
 
@@ -211,14 +211,14 @@ export default function Today() {
           {/* Outcome banner */}
           <div className={`px-6 py-4 border-b border-zinc-800 flex items-center justify-between
             ${day.overallOutcome === 'hit'
-              ? 'bg-emerald-950/40'
+              ? 'bg-blue-950/40'
               : day.overallOutcome === 'partial'
               ? 'bg-amber-950/40'
               : 'bg-red-950/30'}`}>
             <div>
               <p className="label mb-0.5">Today's result</p>
               <p className={`text-lg font-bold capitalize
-                ${day.overallOutcome === 'hit' ? 'text-emerald-300'
+                ${day.overallOutcome === 'hit' ? 'text-blue-300'
                   : day.overallOutcome === 'partial' ? 'text-amber-300'
                   : 'text-red-400'}`}>
                 {OUTCOME_CONFIG[day.overallOutcome!]?.icon} {day.overallOutcome}
@@ -234,14 +234,14 @@ export default function Today() {
               <div key={c.id} className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5 flex-1 min-w-0">
                   <span className={`w-1.5 h-1.5 rounded-full shrink-0
-                    ${c.outcome === 'hit' ? 'bg-emerald-400'
+                    ${c.outcome === 'hit' ? 'bg-blue-400'
                       : c.outcome === 'partial' ? 'bg-amber-400'
                       : c.outcome === 'miss' ? 'bg-red-400'
                       : 'bg-zinc-600'}`} />
                   <span className="text-sm text-zinc-300 truncate">{c.text}</span>
                 </div>
                 <span className={`text-xs font-semibold capitalize shrink-0
-                  ${c.outcome === 'hit' ? 'text-emerald-400'
+                  ${c.outcome === 'hit' ? 'text-blue-400'
                     : c.outcome === 'partial' ? 'text-amber-400'
                     : c.outcome === 'miss' ? 'text-red-400'
                     : 'text-zinc-600'}`}>

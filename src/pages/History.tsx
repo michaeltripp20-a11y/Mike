@@ -5,7 +5,7 @@ import ScoreBar from '../components/ScoreBar'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 const OUTCOME_COLOR: Record<string, string> = {
-  hit: '#10b981',
+  hit: '#6366f1',
   partial: '#f59e0b',
   miss: '#ef4444',
 }
@@ -37,7 +37,7 @@ export default function History() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-5 h-5 border-2 border-zinc-700 border-t-emerald-400 rounded-full animate-spin" />
+      <div className="w-5 h-5 border-2 border-zinc-700 border-t-indigo-400 rounded-full animate-spin" />
     </div>
   )
 
@@ -58,7 +58,7 @@ export default function History() {
             <p className="text-zinc-500 text-xs mt-0.5">hit = 2 pts · partial = 1 · miss = 0</p>
           </div>
           <span className={`text-2xl font-bold tabular-nums
-            ${score >= 10 ? 'text-emerald-400' : score >= 6 ? 'text-amber-400' : 'text-red-400'}`}>
+            ${score >= 10 ? 'text-indigo-400' : score >= 6 ? 'text-amber-400' : 'text-red-400'}`}>
             {score}<span className="text-zinc-700 text-base">/14</span>
           </span>
         </div>
@@ -104,7 +104,7 @@ export default function History() {
                     <>
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full
                         ${d.overallOutcome === 'hit'
-                          ? 'bg-emerald-950/70 text-emerald-400 border border-emerald-800/50'
+                          ? 'bg-indigo-950/70 text-indigo-300 border border-indigo-800/50'
                           : d.overallOutcome === 'partial'
                           ? 'bg-amber-950/70 text-amber-400 border border-amber-800/50'
                           : 'bg-red-950/70 text-red-400 border border-red-800/50'}`}>
@@ -121,7 +121,7 @@ export default function History() {
                 {d.commitments.map(c => (
                   <div key={c.id} className="flex items-center gap-2.5 text-xs">
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0
-                      ${c.outcome === 'hit' ? 'bg-emerald-500'
+                      ${c.outcome === 'hit' ? 'bg-indigo-400'
                         : c.outcome === 'partial' ? 'bg-amber-500'
                         : c.outcome === 'miss' ? 'bg-red-500'
                         : 'bg-zinc-700'}`} />

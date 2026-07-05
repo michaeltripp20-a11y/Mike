@@ -5,14 +5,14 @@ import { Navigate } from 'react-router-dom'
 import ScoreBar from '../components/ScoreBar'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
-  closed: { label: 'Closed',   color: 'text-emerald-400', dot: 'bg-emerald-400' },
-  paced:  { label: 'Paced',    color: 'text-indigo-400',  dot: 'bg-indigo-400' },
-  open:   { label: 'Open',     color: 'text-zinc-300',    dot: 'bg-zinc-500' },
-  none:   { label: 'No entry', color: 'text-zinc-600',    dot: 'bg-zinc-700' },
+  closed: { label: 'Closed',   color: 'text-blue-400',   dot: 'bg-blue-400' },
+  paced:  { label: 'Paced',    color: 'text-indigo-400', dot: 'bg-indigo-400' },
+  open:   { label: 'Open',     color: 'text-zinc-300',   dot: 'bg-zinc-500' },
+  none:   { label: 'No entry', color: 'text-zinc-600',   dot: 'bg-zinc-700' },
 }
 
 const OUTCOME_COLOR: Record<string, string> = {
-  hit: 'text-emerald-400',
+  hit: 'text-blue-400',
   partial: 'text-amber-400',
   miss: 'text-red-400',
 }

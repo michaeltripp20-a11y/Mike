@@ -1,7 +1,7 @@
 export default function ScoreBar({ score, max = 14 }: { score: number; max?: number }) {
   const pct = Math.min(100, (score / max) * 100)
   const color = pct >= 70
-    ? 'from-emerald-500 to-emerald-400'
+    ? 'from-indigo-600 to-blue-400'
     : pct >= 40
     ? 'from-amber-500 to-amber-400'
     : 'from-red-600 to-red-500'

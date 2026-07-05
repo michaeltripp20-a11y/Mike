@@ -36,17 +36,15 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-[#09090b]">
-      {/* Subtle glow behind card */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px]
-          bg-emerald-500/5 rounded-full blur-3xl" />
+          bg-indigo-500/6 rounded-full blur-3xl" />
       </div>
 
       <div className="w-full max-w-sm relative">
-        {/* Brand */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-700
-            flex items-center justify-center mx-auto mb-4 shadow-xl shadow-emerald-900/40">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-700
+            flex items-center justify-center mx-auto mb-4 shadow-xl shadow-indigo-900/40">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M3 17L8.5 10.5L12.5 14.5L20 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -55,9 +53,7 @@ export default function Login() {
           <p className="text-zinc-500 text-sm mt-1">Daily execution for floor leaders</p>
         </div>
 
-        {/* Card */}
         <div className="card p-6 space-y-4 shadow-2xl shadow-black/40">
-          {/* Mode toggle */}
           <div className="flex rounded-xl overflow-hidden border border-zinc-800 p-0.5 gap-0.5 bg-zinc-800/40">
             {(['login', 'register'] as Mode[]).map(m => (
               <button key={m} type="button" onClick={() => setMode(m)}
@@ -93,7 +89,6 @@ export default function Login() {
                 </div>
               </>
             )}
-
             <div>
               <label className="label mb-1.5 block">Email</label>
               <input className="input" placeholder="you@example.com" type="email" value={form.email}

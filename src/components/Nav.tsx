@@ -8,9 +8,8 @@ export default function Nav() {
     <header className="border-b border-zinc-800/60 bg-zinc-950/90 backdrop-blur-md sticky top-0 z-10">
       <div className="max-w-4xl mx-auto px-5 h-14 flex items-center justify-between gap-4">
 
-        {/* Logo */}
         <div className="flex items-center gap-2.5 shrink-0">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-900/40">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-700 flex items-center justify-center shadow-lg shadow-indigo-900/40">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M2 10L5.5 6L8 8.5L12 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -18,7 +17,6 @@ export default function Nav() {
           <span className="font-bold text-white tracking-tight">FloorTracker</span>
         </div>
 
-        {/* Nav links */}
         <nav className="flex items-center gap-0.5">
           {[
             { to: '/', label: 'Today', end: true },
@@ -34,7 +32,7 @@ export default function Nav() {
                 <>
                   {label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-emerald-400 rounded-full" />
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-indigo-400 rounded-full" />
                   )}
                 </>
               )}
@@ -42,7 +40,6 @@ export default function Nav() {
           ))}
         </nav>
 
-        {/* User */}
         <div className="flex items-center gap-3 shrink-0">
           <span className="text-zinc-500 text-sm hidden sm:block truncate max-w-[120px]">{user?.name}</span>
           <button onClick={logout}
