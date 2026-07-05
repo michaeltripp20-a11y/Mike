@@ -16,26 +16,31 @@ if (!SUBSTACK_SESSION_COOKIE) throw new Error("Missing SUBSTACK_SESSION_COOKIE")
 
 const substack = new SubstackClient(SUBSTACK_PUBLICATION, SUBSTACK_SESSION_COOKIE);
 
+const mode = process.argv[2]; // "note" or "weekly"
+
 (async () => {
-  let notes = loadNotes();
-
-  if (notes.length === 0) {
-    console.log("No saved notes found — generating a fresh note...");
-    await generateDailyNote();
-    notes = loadNotes();
+  if (mode === "weekly") {
+    let notes = loadNotes();
+    if (notes.length === 0) {
+      console.log("No saved notes — generating one now...");
+      await generateDailyNote();
+      notes = loadNotes();
+    }
+    console.log(`Generating weekly newsletter from ${notes.length} note(s)...`);
+    const article = await generateArticle(notes);
+    console.log(`Title: ${article.title}`);
+    await substack.createAndPublish({ title: article.title, subtitle: article.subtitle, body_html: article.body });
+    console.log("Done.");
+  } else {
+    // Default: publish a daily note
+    console.log("Generating daily note...");
+    const note = await generateDailyNote();
+    console.log(`Theme: ${note.theme}`);
+    await substack.createAndPublish({
+      title: note.theme.charAt(0).toUpperCase() + note.theme.slice(1),
+      subtitle: "A quick insight from the floor.",
+      body_html: `<p>${note.insight}</p>`,
+    });
+    console.log("Done.");
   }
-
-  console.log(`Generating newsletter from ${notes.length} note(s)...`);
-  const article = await generateArticle(notes);
-  console.log(`Title: ${article.title}`);
-  console.log(`Topic: ${article.topic}`);
-  console.log(`Body length: ${article.body.length} chars`);
-
-  await substack.createAndPublish({
-    title: article.title,
-    subtitle: article.subtitle,
-    body_html: article.body,
-  });
-
-  console.log("Done.");
 })();
