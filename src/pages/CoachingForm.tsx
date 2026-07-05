@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import {
-  coachingApi, FOCUS_AREA_LABELS,
-  type FocusArea, type CoachingNote, type LeaderDay, type CoachingNoteWithDay,
+  coachingApi,
+  type CoachingNote, type LeaderDay, type CoachingNoteWithDay,
 } from '../api'
-
-const FOCUS_OPTIONS = Object.entries(FOCUS_AREA_LABELS) as [FocusArea, string][]
+import { getValues, LEADER_TYPES } from '../constants/leaderTypes'
 
 const OUTCOME_COLOR: Record<string, string> = {
   hit: 'text-blue-600', partial: 'text-amber-600', miss: 'text-red-500',
@@ -22,9 +21,11 @@ export default function CoachingForm() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const [leaderName, setLeaderName] = useState<string>(
-    (location.state as { leaderName?: string })?.leaderName ?? ''
-  )
+  const locationState = location.state as { leaderName?: string; leaderType?: string } | null
+  const [leaderName, setLeaderName] = useState<string>(locationState?.leaderName ?? '')
+  const leaderType = locationState?.leaderType ?? null
+  const focusValues = getValues(leaderType)
+  const FOCUS_OPTIONS = Object.entries(focusValues) as [string, string][]
   const [tab, setTab] = useState<Tab>('log')
   const [leaderDays, setLeaderDays] = useState<LeaderDay[]>([])
   const [history, setHistory] = useState<CoachingNoteWithDay[]>([])
@@ -37,7 +38,7 @@ export default function CoachingForm() {
   const [resolving, setResolving] = useState<number | null>(null)
 
   const [form, setForm] = useState({
-    focusArea: '' as FocusArea | '',
+    focusArea: '' as string,
     observation: '',
     agreedActions: '',
     followUpDate: '',
@@ -286,7 +287,7 @@ export default function CoachingForm() {
             <div key={n.id} className="card p-5 space-y-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold text-indigo-600">{FOCUS_AREA_LABELS[n.focusArea]}</p>
+                  <p className="text-sm font-semibold text-indigo-600">{focusValues[n.focusArea] ?? n.focusArea}</p>
                   <p className="text-xs text-gray-400 mt-0.5">
                     {n.dayDate
                       ? new Date(n.dayDate + 'T00:00:00').toLocaleDateString('en-US', {

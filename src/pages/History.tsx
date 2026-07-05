@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
-import { daysApi, coachingApi, FOCUS_AREA_LABELS, type DayEntry } from '../api'
+import { daysApi, coachingApi, type DayEntry } from '../api'
+import { getValues, LEADER_TYPES } from '../constants/leaderTypes'
+import { useAuth } from '../auth'
 import StreakBadge from '../components/StreakBadge'
 import CoachingBadge from '../components/CoachingBadge'
 
@@ -10,6 +12,8 @@ const OUTCOME_LABEL: Record<string, string> = {
 }
 
 export default function History() {
+  const { user } = useAuth()
+  const focusValues = getValues(user?.leaderType)
   const [days, setDays] = useState<DayEntry[]>([])
   const [categoryTotals, setCategoryTotals] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
@@ -38,7 +42,14 @@ export default function History() {
 
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
-        <h1 className="text-xl font-bold text-gray-900">History</h1>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">History</h1>
+          {user?.leaderType && LEADER_TYPES[user.leaderType] && (
+            <p className="text-xs text-gray-400 mt-0.5">
+              {LEADER_TYPES[user.leaderType].emoji} {LEADER_TYPES[user.leaderType].label}
+            </p>
+          )}
+        </div>
         <StreakBadge streak={streak} />
       </div>
 
@@ -57,7 +68,7 @@ export default function History() {
           <p className="text-gray-400 text-sm text-center py-2">No coaching notes logged yet.</p>
         ) : (
           <div className="space-y-3">
-            {Object.entries(FOCUS_AREA_LABELS).map(([key, label]) => {
+            {Object.entries(focusValues).map(([key, label]) => {
               const count = categoryTotals[key] ?? 0
               const pct = totalCoaching > 0 ? (count / totalCoaching) * 100 : 0
               return (

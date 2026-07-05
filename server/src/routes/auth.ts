@@ -4,12 +4,23 @@ import jwt from 'jsonwebtoken'
 import { db } from '../db'
 import { users } from '../db/schema'
 import { eq } from 'drizzle-orm'
-import { JWT_SECRET } from '../middleware/auth'
+import { JWT_SECRET, requireAuth } from '../middleware/auth'
 
 const router = Router()
 
 function makeToken(userId: number, role: 'leader' | 'manager', storeId: number) {
   return jwt.sign({ userId, role, storeId }, JWT_SECRET, { expiresIn: '30d' })
+}
+
+function formatUser(user: typeof users.$inferSelect) {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    storeId: user.storeId,
+    leaderType: user.leaderType ?? null,
+  }
 }
 
 router.post('/register', async (req, res) => {
@@ -26,7 +37,7 @@ router.post('/register', async (req, res) => {
   const passwordHash = await bcrypt.hash(password, 10)
   const [user] = db.insert(users).values({ name, email, passwordHash, role, storeId, createdAt: new Date() }).returning().all()
   const token = makeToken(user.id, user.role, user.storeId)
-  res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, storeId: user.storeId } })
+  res.status(201).json({ token, user: formatUser(user) })
 })
 
 router.post('/login', async (req, res) => {
@@ -41,7 +52,20 @@ router.post('/login', async (req, res) => {
     return
   }
   const token = makeToken(user.id, user.role, user.storeId)
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, storeId: user.storeId } })
+  res.json({ token, user: formatUser(user) })
+})
+
+router.patch('/profile', requireAuth, (req, res) => {
+  const { leaderType } = req.body ?? {}
+  if (!leaderType) {
+    res.status(400).json({ error: 'leaderType is required' })
+    return
+  }
+  const [updated] = db.update(users)
+    .set({ leaderType })
+    .where(eq(users.id, req.jwtPayload.userId))
+    .returning().all()
+  res.json(formatUser(updated))
 })
 
 export default router

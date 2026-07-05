@@ -5,6 +5,7 @@ interface AuthCtx {
   user: User | null
   login: (token: string, user: User) => void
   logout: () => void
+  updateUser: (u: User) => void
 }
 
 const Ctx = createContext<AuthCtx>(null!)
@@ -31,7 +32,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
-  return <Ctx.Provider value={{ user, login, logout }}>{children}</Ctx.Provider>
+  function updateUser(u: User) {
+    localStorage.setItem('ft_user', JSON.stringify(u))
+    setUser(u)
+  }
+
+  return <Ctx.Provider value={{ user, login, logout, updateUser }}>{children}</Ctx.Provider>
 }
 
 export function useAuth() {

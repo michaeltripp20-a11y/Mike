@@ -29,13 +29,15 @@ export const api = {
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export interface AuthPayload { token: string; user: User }
-export interface User { id: number; name: string; email: string; role: 'leader' | 'manager'; storeId: number }
+export interface User { id: number; name: string; email: string; role: 'leader' | 'manager'; storeId: number; leaderType: string | null }
 
 export const authApi = {
   register: (body: { name: string; email: string; password: string; role: 'leader' | 'manager'; storeId: number }) =>
     api.post<AuthPayload>('/auth/register', body),
   login: (body: { email: string; password: string }) =>
     api.post<AuthPayload>('/auth/login', body),
+  updateProfile: (body: { leaderType: string }) =>
+    api.patch<User>('/auth/profile', body),
 }
 
 // ── Days ──────────────────────────────────────────────────────────────────────
@@ -67,6 +69,7 @@ export const daysApi = {
 export interface TeamMember {
   userId: number
   name: string
+  leaderType: string | null
   streak: number
   sevenDayScore: number
   todayStatus: 'open' | 'paced' | 'closed' | 'none'
@@ -93,7 +96,7 @@ export interface CoachingNote {
   dayId: number
   managerId: number
   leaderId: number
-  focusArea: FocusArea
+  focusArea: string
   observation: string
   agreedActions: string
   followUpDate: string | null
@@ -132,7 +135,7 @@ export interface LeaderDay {
 
 export const coachingApi = {
   create: (body: {
-    dayId: number; leaderId: number; focusArea: FocusArea
+    dayId: number; leaderId: number; focusArea: string
     observation: string; agreedActions: string; followUpDate?: string
   }) => api.post<CoachingNote>('/coaching', body),
 

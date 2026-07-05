@@ -7,18 +7,12 @@ import { requireAuth, requireManager } from '../middleware/auth'
 const router = Router()
 router.use(requireAuth)
 
-const FOCUS_AREAS = ['floor_presence', 'team_development', 'execution', 'customer_engagement', 'priority_setting']
-
 // POST /coaching — manager creates a coaching note for a leader's day
 router.post('/', requireManager, (req, res) => {
   const { dayId, leaderId, focusArea, observation, agreedActions, followUpDate } = req.body ?? {}
 
   if (!dayId || !leaderId || !focusArea || !observation || !agreedActions) {
     res.status(400).json({ error: 'dayId, leaderId, focusArea, observation, and agreedActions are required' })
-    return
-  }
-  if (!FOCUS_AREAS.includes(focusArea)) {
-    res.status(400).json({ error: 'Invalid focusArea' })
     return
   }
 

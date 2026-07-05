@@ -12,6 +12,7 @@ export const users = sqliteTable('users', {
   passwordHash: text('password_hash').notNull(),
   role: text('role', { enum: ['leader', 'manager'] }).notNull().default('leader'),
   storeId: integer('store_id').notNull().default(1),
+  leaderType: text('leader_type'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 })
 
@@ -40,9 +41,7 @@ export const coachingNotes = sqliteTable('coaching_notes', {
   dayId: integer('day_id').notNull(),
   managerId: integer('manager_id').notNull(),
   leaderId: integer('leader_id').notNull(),
-  focusArea: text('focus_area', {
-    enum: ['floor_presence', 'team_development', 'execution', 'customer_engagement', 'priority_setting'],
-  }).notNull(),
+  focusArea: text('focus_area').notNull(),
   observation: text('observation').notNull(),
   agreedActions: text('agreed_actions').notNull(),
   followUpDate: text('follow_up_date'),         // YYYY-MM-DD, optional

@@ -75,6 +75,8 @@ const migrations = [
   // district → store rename
   "ALTER TABLE districts RENAME TO stores",
   "ALTER TABLE users RENAME COLUMN district_id TO store_id",
+  // leader type onboarding
+  "ALTER TABLE users ADD COLUMN leader_type TEXT",
 ]
 for (const sql of migrations) {
   try { sqlite.exec(sql) } catch { /* already applied */ }

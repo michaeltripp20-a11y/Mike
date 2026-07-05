@@ -6,11 +6,14 @@ import Today from './pages/Today'
 import History from './pages/History'
 import TeamBoard from './pages/TeamBoard'
 import CoachingForm from './pages/CoachingForm'
+import LeaderTypeSetup from './pages/LeaderTypeSetup'
 import Nav from './components/Nav'
 
 function RequireAuth({ children }: { children: React.ReactElement }) {
   const { user } = useAuth()
-  return user ? children : <Navigate to="/login" replace />
+  if (!user) return <Navigate to="/login" replace />
+  if (user.role === 'leader' && !user.leaderType) return <Navigate to="/setup" replace />
+  return children
 }
 
 export default function App() {
@@ -18,9 +21,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {user && <Nav />}
+      {user && user.leaderType && <Nav />}
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/setup" element={user ? <LeaderTypeSetup /> : <Navigate to="/login" replace />} />
         <Route path="/" element={<RequireAuth><Today /></RequireAuth>} />
         <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
         <Route path="/team" element={<RequireAuth><TeamBoard /></RequireAuth>} />

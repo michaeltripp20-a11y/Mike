@@ -46,6 +46,7 @@ router.get('/', (req, res) => {
     return {
       userId: leader.id,
       name: leader.name,
+      leaderType: leader.leaderType ?? null,
       streak: lastClosed?.streak ?? 0,
       sevenDayScore,
       todayStatus: (todayDay?.status ?? 'none') as 'open' | 'paced' | 'closed' | 'none',

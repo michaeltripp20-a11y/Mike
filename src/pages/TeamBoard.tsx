@@ -153,7 +153,7 @@ export default function TeamBoard() {
                     {/* Coach button */}
                     <td className="px-5 py-4">
                       <button
-                        onClick={() => navigate(`/coach/${m.userId}`, { state: { leaderName: m.name } })}
+                        onClick={() => navigate(`/coach/${m.userId}`, { state: { leaderName: m.name, leaderType: m.leaderType } })}
                         className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-200
                           bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:border-indigo-300
                           transition-colors whitespace-nowrap">
