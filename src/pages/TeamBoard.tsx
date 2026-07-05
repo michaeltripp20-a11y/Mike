@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { teamApi, type TeamMember } from '../api'
 import { useAuth } from '../auth'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import ScoreBar from '../components/ScoreBar'
-import CoachingPanel from '../components/CoachingPanel'
 import FollowUpDashboard from '../components/FollowUpDashboard'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
@@ -32,9 +31,9 @@ function Avatar({ name }: { name: string }) {
 
 export default function TeamBoard() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
-  const [coaching, setCoaching] = useState<{ id: number; name: string } | null>(null)
 
   if (user?.role !== 'manager') return <Navigate to="/" replace />
 
@@ -154,7 +153,7 @@ export default function TeamBoard() {
                     {/* Coach button */}
                     <td className="px-5 py-4">
                       <button
-                        onClick={() => setCoaching({ id: m.userId, name: m.name })}
+                        onClick={() => navigate(`/coach/${m.userId}`, { state: { leaderName: m.name } })}
                         className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-200
                           bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:border-indigo-300
                           transition-colors whitespace-nowrap">
@@ -170,14 +169,6 @@ export default function TeamBoard() {
       </div>
 
       <FollowUpDashboard />
-
-      {coaching && (
-        <CoachingPanel
-          leaderId={coaching.id}
-          leaderName={coaching.name}
-          onClose={() => setCoaching(null)}
-        />
-      )}
     </main>
   )
 }
