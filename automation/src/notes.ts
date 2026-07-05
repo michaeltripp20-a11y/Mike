@@ -67,13 +67,20 @@ export async function generateDailyNote(): Promise<DailyNote> {
 
   const res = await client.messages.create({
     model: "claude-opus-4-8",
-    max_tokens: 300,
+    max_tokens: 500,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     thinking: { type: "adaptive" } as any,
     messages: [
       {
         role: "user",
-        content: `You write daily notes for retail store managers. Write one sharp, practical insight (3–5 sentences max) on this topic: "${theme}". Make it feel like advice from a great manager to another manager — direct, specific, grounded in real store life. No fluff, no corporate speak. Plain text only, no formatting.`,
+        content: `You write daily notes for retail store managers. Write a short, practical note on this topic: "${theme}".
+
+Structure it as 3 short paragraphs:
+1. Open with a specific scenario from the floor (2 sentences)
+2. The core insight or lesson (2–3 sentences)
+3. One concrete thing to try today (1–2 sentences)
+
+Format using HTML: wrap each paragraph in <p> tags. Use <strong> for one key phrase per paragraph. No headers, no bullet lists — just 3 clean paragraphs. Tone: direct, peer-to-peer, like a seasoned manager texting a tip to another manager.`,
       },
     ],
   });

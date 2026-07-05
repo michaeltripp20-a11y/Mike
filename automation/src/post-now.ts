@@ -39,7 +39,7 @@ const mode = process.argv[2]; // "note" or "weekly"
     await substack.createAndPublish({
       title: note.theme.charAt(0).toUpperCase() + note.theme.slice(1),
       subtitle: "A quick insight from the floor.",
-      body_html: `<p>${note.insight}</p>`,
+      body_html: note.insight,
     });
     console.log("Done.");
   }
