@@ -1,8 +1,11 @@
 [phases.setup]
 nixPkgs = ["nodejs_22"]
 
+[phases.install]
+cmds = ["rm -f package-lock.json", "npm install", "npm install -g serve"]
+
 [phases.build]
-cmds = ["rm -f package-lock.json", "npm install", "npm run build"]
+cmds = ["npm run build"]
 
 [start]
-cmd = "sh -c 'npx vite preview --host 0.0.0.0 --port ${PORT:-4173}'"
+cmd = "sh -c 'serve -s dist -l ${PORT:-4173}'"
