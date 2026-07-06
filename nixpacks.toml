@@ -5,4 +5,4 @@ nixPkgs = ["nodejs_22"]
 cmds = ["rm -f package-lock.json", "npm install", "npm run build"]
 
 [start]
-cmd = "npx vite preview --host 0.0.0.0 --port $PORT"
+cmd = "sh -c 'npx vite preview --host 0.0.0.0 --port ${PORT:-4173}'"
