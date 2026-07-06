@@ -13,7 +13,8 @@ const app = express()
 const PORT = Number(process.env.PORT ?? 3001)
 
 const allowedOrigins = (process.env.CLIENT_ORIGIN ?? 'http://localhost:5173').split(',').map(s => s.trim())
-app.use(cors({ origin: allowedOrigins }))
+console.log('CORS allowedOrigins:', allowedOrigins)
+app.use(cors({ origin: true }))
 app.use(express.json())
 
 app.use('/auth', authRouter)
