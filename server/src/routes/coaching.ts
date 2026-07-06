@@ -3,6 +3,7 @@ import { db } from '../db'
 import { coachingNotes, days, users } from '../db/schema'
 import { eq, and, desc, isNotNull, ne } from 'drizzle-orm'
 import { requireAuth, requireManager } from '../middleware/auth'
+import { sendCoachingEmails } from '../email'
 
 const router = Router()
 router.use(requireAuth)
@@ -30,6 +31,24 @@ router.post('/', requireManager, (req, res) => {
   }
 
   // Upsert — one coaching note per day
+  const manager = db.select().from(users).where(eq(users.id, req.jwtPayload.userId)).get()
+  const dayDate = day.date
+
+  async function fireEmail(note: typeof coachingNotes.$inferSelect) {
+    if (!leader || !manager) return
+    sendCoachingEmails({
+      repName: leader.name,
+      repEmail: leader.email,
+      managerName: manager.name,
+      managerEmail: manager.email,
+      date: dayDate,
+      focusArea,
+      observation: note.observation,
+      agreedActions: note.agreedActions,
+      followUpDate: note.followUpDate,
+    }).catch(err => console.error('[email] Failed to send coaching email:', err))
+  }
+
   const existing = db.select().from(coachingNotes).where(eq(coachingNotes.dayId, dayId)).get()
   if (existing) {
     const [updated] = db.update(coachingNotes)
@@ -37,6 +56,7 @@ router.post('/', requireManager, (req, res) => {
       .where(eq(coachingNotes.id, existing.id))
       .returning().all()
     res.json(formatNote(updated))
+    fireEmail(updated)
     return
   }
 
@@ -52,6 +72,7 @@ router.post('/', requireManager, (req, res) => {
   }).returning().all()
 
   res.status(201).json(formatNote(note))
+  fireEmail(note)
 })
 
 // GET /coaching/day/:dayId — get coaching note for a specific day
