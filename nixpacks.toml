@@ -2,7 +2,7 @@
 nixPkgs = ["nodejs_22"]
 
 [phases.build]
-cmds = ["rm -f package-lock.json", "npm install", "npm run build", "npm install -g serve"]
+cmds = ["rm -f package-lock.json", "npm install", "npm run build"]
 
 [start]
-cmd = "sh -c 'serve -s dist -l ${PORT:-4173}'"
+cmd = "npm run preview"
