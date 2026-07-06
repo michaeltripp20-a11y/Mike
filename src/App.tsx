@@ -21,7 +21,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {user && user.leaderType && <Nav />}
+      {user && (user.role === 'manager' || user.leaderType) && <Nav />}
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/setup" element={user ? <LeaderTypeSetup /> : <Navigate to="/login" replace />} />
