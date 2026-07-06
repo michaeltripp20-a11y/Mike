@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "npm run preview -- --port $PORT --host",
+    "startCommand": "node static-server.mjs",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE"
   }
