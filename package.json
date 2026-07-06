@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently -n client,server -c cyan,yellow \"vite\" \"npm run dev --prefix server\"",
     "build": "tsc && vite build",
-    "preview": "serve -s dist -l $PORT",
+    "preview": "node static-server.mjs",
     "start": "npm run build && serve -s dist"
   },
   "dependencies": {
