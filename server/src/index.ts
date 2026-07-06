@@ -28,6 +28,6 @@ app.use('/coaching', coachingRouter)
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
 
-app.listen(PORT, () => {
-  console.log(`FloorTracker API running on http://localhost:${PORT}`)
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`FloorTracker API running on 0.0.0.0:${PORT}`)
 })
