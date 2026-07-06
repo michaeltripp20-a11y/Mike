@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "concurrently -n client,server -c cyan,yellow \"vite\" \"npm run dev --prefix server\"",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "npm run build && vite preview"
   },
   "dependencies": {
     "react": "^19.2.7",
