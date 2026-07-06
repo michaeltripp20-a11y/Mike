@@ -101,19 +101,13 @@ export async function sendCoachingEmails(data: CoachingEmailData) {
 
   const subject = `Coaching session: ${data.focusArea} — ${formatDate(data.date)}`
 
+  const from = process.env.SMTP_FROM
+    ? `FloorTracker <${process.env.SMTP_FROM}>`
+    : `FloorTracker <${process.env.SMTP_USER}>`
+
   await Promise.all([
-    transporter.sendMail({
-      from: `FloorTracker <${process.env.SMTP_USER}>`,
-      to: data.repEmail,
-      subject,
-      html: emailHtml(data, true),
-    }),
-    transporter.sendMail({
-      from: `FloorTracker <${process.env.SMTP_USER}>`,
-      to: data.managerEmail,
-      subject,
-      html: emailHtml(data, false),
-    }),
+    transporter.sendMail({ from, to: data.repEmail, subject, html: emailHtml(data, true) }),
+    transporter.sendMail({ from, to: data.managerEmail, subject, html: emailHtml(data, false) }),
   ])
 
   console.log(`[email] Sent coaching summary to ${data.repEmail} and ${data.managerEmail}`)
