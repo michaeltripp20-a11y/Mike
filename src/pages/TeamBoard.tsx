@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { teamApi, type TeamMember } from '../api'
+import { teamApi, authApi, type TeamMember } from '../api'
 import { useAuth } from '../auth'
 import { Navigate, useNavigate } from 'react-router-dom'
 import ScoreBar from '../components/ScoreBar'
@@ -34,6 +34,26 @@ export default function TeamBoard() {
   const navigate = useNavigate()
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
+  const [showAdd, setShowAdd] = useState(false)
+  const [addForm, setAddForm] = useState({ name: '', email: '', password: '' })
+  const [addError, setAddError] = useState('')
+  const [addLoading, setAddLoading] = useState(false)
+
+  async function addRep(e: React.FormEvent) {
+    e.preventDefault()
+    setAddError('')
+    setAddLoading(true)
+    try {
+      await authApi.register({ ...addForm, role: 'leader', storeId: user?.storeId ?? 1 })
+      setShowAdd(false)
+      setAddForm({ name: '', email: '', password: '' })
+      teamApi.board().then(setMembers)
+    } catch (err: unknown) {
+      setAddError(err instanceof Error ? err.message : 'Failed to add rep')
+    } finally {
+      setAddLoading(false)
+    }
+  }
 
   if (user?.role !== 'manager') return <Navigate to="/" replace />
 
@@ -59,9 +79,15 @@ export default function TeamBoard() {
           <h1 className="text-xl font-bold text-gray-900">Sales Team Board</h1>
           <p className="text-gray-400 text-xs mt-0.5">{members.length} rep{members.length !== 1 ? 's' : ''} · Store {user?.storeId}</p>
         </div>
-        <div className="flex gap-3 text-xs text-gray-500">
-          <span><span className="text-blue-600 font-semibold">{on_track.length}</span> on track</span>
-          {slipping.length > 0 && <span><span className="text-red-500 font-semibold">{slipping.length}</span> need attention</span>}
+        <div className="flex items-center gap-3">
+          <div className="flex gap-3 text-xs text-gray-500">
+            <span><span className="text-blue-600 font-semibold">{on_track.length}</span> on track</span>
+            {slipping.length > 0 && <span><span className="text-red-500 font-semibold">{slipping.length}</span> need attention</span>}
+          </div>
+          <button onClick={() => setShowAdd(true)}
+            className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+            + Add Rep
+          </button>
         </div>
       </div>
 
@@ -169,6 +195,51 @@ export default function TeamBoard() {
       </div>
 
       <FollowUpDashboard />
+
+      {/* Add Rep Modal */}
+      {showAdd && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-bold text-gray-900">Add Sales Rep</h2>
+              <button onClick={() => { setShowAdd(false); setAddError('') }}
+                className="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+            </div>
+            <form onSubmit={addRep} className="space-y-3">
+              <div>
+                <label className="label mb-1.5 block">Full name</label>
+                <input className="input" placeholder="Rep name" value={addForm.name}
+                  onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))} required />
+              </div>
+              <div>
+                <label className="label mb-1.5 block">Email</label>
+                <input className="input" type="email" placeholder="rep@example.com" value={addForm.email}
+                  onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required />
+              </div>
+              <div>
+                <label className="label mb-1.5 block">Password</label>
+                <input className="input" type="password" placeholder="••••••••" value={addForm.password}
+                  onChange={e => setAddForm(f => ({ ...f, password: e.target.value }))} required />
+              </div>
+              {addError && (
+                <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-xs px-3 py-2.5 rounded-xl">
+                  <span>⚠</span> {addError}
+                </div>
+              )}
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => { setShowAdd(false); setAddError('') }}
+                  className="flex-1 text-sm font-medium px-3 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                  Cancel
+                </button>
+                <button type="submit" disabled={addLoading}
+                  className="flex-1 btn-primary">
+                  {addLoading ? 'Adding…' : 'Add Rep'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
