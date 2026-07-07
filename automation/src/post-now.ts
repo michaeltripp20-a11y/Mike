@@ -40,6 +40,7 @@ const mode = process.argv[2]; // "note" or "weekly"
       title: "",
       subtitle: "",
       body_html: note.insight,
+      type: "note",
     });
     console.log("Done.");
   }

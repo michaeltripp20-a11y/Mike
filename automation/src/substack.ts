@@ -4,6 +4,7 @@ interface DraftPayload {
   title: string;
   subtitle: string;
   body_html: string;
+  type?: "newsletter" | "note";
 }
 
 interface SubstackDraft {
@@ -113,11 +114,12 @@ export class SubstackClient {
   }
 
   async createDraft(payload: DraftPayload): Promise<SubstackDraft> {
+    const isNote = payload.type === "note";
     const doc = htmlToSubstackDoc(payload.body_html);
 
     const body = {
-      draft_title: payload.title,
-      draft_subtitle: payload.subtitle,
+      draft_title: isNote ? null : payload.title,
+      draft_subtitle: isNote ? null : payload.subtitle,
       draft_body: JSON.stringify(doc),
       draft_section_id: null,
       audience: "everyone",
@@ -127,6 +129,7 @@ export class SubstackClient {
       draft_podcast_preview_upload_id: null,
       draft_video_upload_id: null,
       draft_podcast_upload_id: null,
+      ...(isNote ? { type: "feed" } : {}),
     };
 
     const res = await fetch(`${this.baseUrl}/api/v1/drafts`, {
@@ -159,7 +162,30 @@ export class SubstackClient {
     }
   }
 
+  async publishNote(body_html: string): Promise<void> {
+    const doc = htmlToSubstackDoc(body_html);
+    const res = await fetch(`${this.baseUrl}/api/v1/reader/notes`, {
+      method: "POST",
+      headers: this.headers(),
+      body: JSON.stringify({
+        body: JSON.stringify(doc),
+        surface: "writer",
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Failed to publish note: ${res.status} ${res.statusText}\n${text}`);
+    }
+    console.log(`[substack] Note published.`);
+  }
+
   async createAndPublish(payload: DraftPayload): Promise<{ draftId: number; title: string }> {
+    if (payload.type === "note") {
+      await this.publishNote(payload.body_html);
+      return { draftId: 0, title: "" };
+    }
+
     console.log(`[substack] Creating draft: "${payload.title}"`);
     const draft = await this.createDraft(payload);
     console.log(`[substack] Draft created with id=${draft.id}`);

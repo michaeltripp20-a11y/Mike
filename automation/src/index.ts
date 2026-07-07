@@ -23,6 +23,7 @@ cron.schedule("0 9 * * *", async () => {
       title: "",
       subtitle: "",
       body_html: note.insight,
+      type: "note",
     });
     console.log(`[done] Daily note published: "${note.theme}"`);
   } catch (err) {
