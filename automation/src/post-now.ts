@@ -37,7 +37,7 @@ const mode = process.argv[2]; // "note" or "weekly"
     const note = await generateDailyNote();
     console.log(`Theme: ${note.theme}`);
     await substack.createAndPublish({
-      title: "",
+      title: note.theme.charAt(0).toUpperCase() + note.theme.slice(1),
       subtitle: "",
       body_html: note.insight,
       type: "note",
