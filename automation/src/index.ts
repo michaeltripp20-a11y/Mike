@@ -20,8 +20,8 @@ cron.schedule("0 9 * * *", async () => {
   try {
     const note = await generateDailyNote();
     await substack.createAndPublish({
-      title: note.theme.charAt(0).toUpperCase() + note.theme.slice(1),
-      subtitle: "A quick insight from the floor.",
+      title: "",
+      subtitle: "",
       body_html: note.insight,
     });
     console.log(`[done] Daily note published: "${note.theme}"`);
