@@ -73,14 +73,11 @@ export async function generateDailyNote(): Promise<DailyNote> {
     messages: [
       {
         role: "user",
-        content: `You write daily notes for retail store managers. Write a short, practical note on this topic: "${theme}".
+        content: `Write a daily note for a retail store manager. Topic: "${theme}".
 
-Structure it as 3 short paragraphs:
-1. Open with a specific scenario from the floor (2 sentences)
-2. The core insight or lesson (2–3 sentences)
-3. One concrete thing to try today (1–2 sentences)
+This should feel like a short, casual observation — not a newsletter or article. Think of it as something you'd jot down and hand to another manager at the end of a shift. 4–6 sentences total. One thought, fully developed. No headers, no bullet points, no sections.
 
-Format using HTML: wrap each paragraph in <p> tags. Use <strong> for one key phrase per paragraph. No headers, no bullet lists — just 3 clean paragraphs. Tone: direct, peer-to-peer, like a seasoned manager texting a tip to another manager.`,
+Format: two <p> tags only. First paragraph sets up the observation. Second paragraph lands the point and leaves them with something to think about. Use <strong> once for the single most important phrase. Nothing else.`,
       },
     ],
   });
