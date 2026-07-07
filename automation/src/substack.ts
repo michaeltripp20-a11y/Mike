@@ -164,12 +164,17 @@ export class SubstackClient {
 
   async publishNote(body_html: string): Promise<void> {
     const doc = htmlToSubstackDoc(body_html);
-    const res = await fetch(`${this.baseUrl}/api/v1/reader/notes`, {
+    const res = await fetch(`https://substack.com/api/v1/comment/feed`, {
       method: "POST",
-      headers: this.headers(),
+      headers: {
+        ...this.headers(),
+        Origin: "https://substack.com",
+        Referer: "https://substack.com",
+      },
       body: JSON.stringify({
         body: JSON.stringify(doc),
-        surface: "writer",
+        type: "publication",
+        publication_id: null,
       }),
     });
 
