@@ -10,6 +10,7 @@ import {
   type KPI, type Transaction, type RevenuePoint, type ProductStat, type RegionStat,
   randomBetween,
 } from './data'
+import PostAutomation from './PostAutomation'
 
 function fmt(n: number) {
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`
@@ -365,6 +366,8 @@ export default function App() {
             </ResponsiveContainer>
           </div>
         </div>
+
+        <PostAutomation kpi={kpi} products={products} regions={regions} />
       </main>
     </div>
   )
