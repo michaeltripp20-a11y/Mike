@@ -52,8 +52,6 @@ export default function Today() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const [number, setNumber] = useState('')
-  const [texts, setTexts] = useState(['', '', ''])
   const [paceNote, setPaceNote] = useState('')
   const [commitOutcomes, setCommitOutcomes] = useState<Record<number, Outcome | null>>({})
   const [overallOutcome, setOverallOutcome] = useState<Outcome | null>(null)
@@ -72,15 +70,6 @@ export default function Today() {
       setCommitOutcomes(init)
     }
   }, [day])
-
-  async function openDay() {
-    const filled = texts.filter(t => t.trim())
-    if (!filled.length) return setError('Add at least one commitment')
-    if (!number) return setError('Enter your daily number target')
-    setError('')
-    try { setDay(await daysApi.open({ dailyNumber: Number(number), commitments: filled })) }
-    catch (err: unknown) { setError(err instanceof Error ? err.message : 'Error') }
-  }
 
   async function paceDay() {
     if (!day) return
@@ -127,34 +116,11 @@ export default function Today() {
         </div>
       )}
 
-      {/* ── Open form ── */}
+      {/* ── No day yet ── */}
       {!day && (
-        <Section title="Set your day" subtitle="Define what you're going after today">
-          <div className="space-y-3">
-            <div>
-              <label className="label mb-2 block">Daily number target</label>
-              <input type="number" value={number} onChange={e => setNumber(e.target.value)} min={0}
-                placeholder="e.g. 12,000"
-                className="input" />
-            </div>
-            <div>
-              <label className="label mb-2 block">Commitments — up to 3</label>
-              <div className="space-y-2">
-                {texts.map((t, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full border border-gray-300 text-gray-400 text-xs
-                      flex items-center justify-center shrink-0 font-medium">{i + 1}</span>
-                    <input value={t}
-                      onChange={e => setTexts(prev => prev.map((v, j) => j === i ? e.target.value : v))}
-                      placeholder={i === 0 ? 'Your main commitment' : `Commitment ${i + 1} (optional)`}
-                      className="input" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          <button onClick={openDay} className="btn-primary">Start day →</button>
-        </Section>
+        <div className="card p-8 text-center text-gray-400 text-sm">
+          No entry for today yet.
+        </div>
       )}
 
       {/* ── Active day ── */}
