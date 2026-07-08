@@ -35,18 +35,20 @@ export default function TeamBoard() {
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
-  const [addForm, setAddForm] = useState({ name: '', email: '', password: '' })
+  const [addForm, setAddForm] = useState({ name: '', email: '' })
   const [addError, setAddError] = useState('')
   const [addLoading, setAddLoading] = useState(false)
+  const [createdPassword, setCreatedPassword] = useState('')
 
   async function addRep(e: React.FormEvent) {
     e.preventDefault()
     setAddError('')
     setAddLoading(true)
+    const password = Math.random().toString(36).slice(2, 10)
     try {
-      await authApi.register({ ...addForm, role: 'leader', storeId: user?.storeId ?? 1 })
-      setShowAdd(false)
-      setAddForm({ name: '', email: '', password: '' })
+      await authApi.register({ ...addForm, password, role: 'leader', storeId: user?.storeId ?? 1 })
+      setAddForm({ name: '', email: '' })
+      setCreatedPassword(password)
       teamApi.board().then(setMembers)
     } catch (err: unknown) {
       setAddError(err instanceof Error ? err.message : 'Failed to add rep')
@@ -202,41 +204,53 @@ export default function TeamBoard() {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-bold text-gray-900">Add Sales Rep</h2>
-              <button onClick={() => { setShowAdd(false); setAddError('') }}
+              <button onClick={() => { setShowAdd(false); setAddError(''); setCreatedPassword('') }}
                 className="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
             </div>
-            <form onSubmit={addRep} className="space-y-3">
-              <div>
-                <label className="label mb-1.5 block">Full name</label>
-                <input className="input" placeholder="Rep name" value={addForm.name}
-                  onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))} required />
-              </div>
-              <div>
-                <label className="label mb-1.5 block">Email</label>
-                <input className="input" type="email" placeholder="rep@example.com" value={addForm.email}
-                  onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required />
-              </div>
-              <div>
-                <label className="label mb-1.5 block">Password</label>
-                <input className="input" type="password" placeholder="••••••••" value={addForm.password}
-                  onChange={e => setAddForm(f => ({ ...f, password: e.target.value }))} required />
-              </div>
-              {addError && (
-                <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-xs px-3 py-2.5 rounded-xl">
-                  <span>⚠</span> {addError}
+
+            {createdPassword ? (
+              <div className="space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-800">
+                  <p className="font-semibold mb-1">Rep added!</p>
+                  <p className="text-xs text-green-700 mb-3">Share these login credentials with your rep:</p>
+                  <div className="bg-white rounded-lg border border-green-200 p-3 space-y-1.5 font-mono text-xs">
+                    <p><span className="text-gray-500">Email:</span> {addForm.email || '—'}</p>
+                    <p><span className="text-gray-500">Password:</span> <span className="font-bold text-gray-900">{createdPassword}</span></p>
+                  </div>
+                  <p className="text-[10px] text-green-600 mt-2">They can change their password after logging in.</p>
                 </div>
-              )}
-              <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => { setShowAdd(false); setAddError('') }}
-                  className="flex-1 text-sm font-medium px-3 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                  Cancel
-                </button>
-                <button type="submit" disabled={addLoading}
-                  className="flex-1 btn-primary">
-                  {addLoading ? 'Adding…' : 'Add Rep'}
-                </button>
+                <button onClick={() => { setShowAdd(false); setCreatedPassword('') }}
+                  className="w-full btn-primary">Done</button>
               </div>
-            </form>
+            ) : (
+              <form onSubmit={addRep} className="space-y-3">
+                <div>
+                  <label className="label mb-1.5 block">Full name</label>
+                  <input className="input" placeholder="Rep name" value={addForm.name}
+                    onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))} required />
+                </div>
+                <div>
+                  <label className="label mb-1.5 block">Email</label>
+                  <input className="input" type="email" placeholder="rep@example.com" value={addForm.email}
+                    onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} required />
+                </div>
+                {addError && (
+                  <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-xs px-3 py-2.5 rounded-xl">
+                    <span>⚠</span> {addError}
+                  </div>
+                )}
+                <div className="flex gap-2 pt-1">
+                  <button type="button" onClick={() => { setShowAdd(false); setAddError('') }}
+                    className="flex-1 text-sm font-medium px-3 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={addLoading}
+                    className="flex-1 btn-primary">
+                    {addLoading ? 'Adding…' : 'Add Rep'}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
