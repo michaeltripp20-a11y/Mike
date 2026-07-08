@@ -74,7 +74,7 @@ export default function CoachingForm() {
   }, [selectedDayId])
 
   async function save() {
-    if (!selectedDayId || !form.focusArea || !form.observation || !form.agreedActions) {
+    if (!form.focusArea || !form.observation || !form.agreedActions) {
       setError('Focus area, observation, and agreed actions are required')
       return
     }
@@ -82,7 +82,7 @@ export default function CoachingForm() {
     setSaving(true)
     try {
       const note = await coachingApi.create({
-        dayId: selectedDayId,
+        dayId: selectedDayId ?? undefined,
         leaderId,
         focusArea: form.focusArea,
         observation: form.observation,
@@ -195,86 +195,84 @@ export default function CoachingForm() {
             )}
           </div>
 
-          {selectedDayId && (
-            <div className="card p-5 space-y-5">
-              {existingNote && (
-                <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-200
-                  text-indigo-600 text-xs px-3 py-2.5 rounded-xl">
-                  <span>✓</span> Coaching note exists — editing will update it.
-                </div>
-              )}
-
-              {/* Focus area */}
-              <div>
-                <label className="label mb-2 block">Focus area</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {FOCUS_OPTIONS.map(([value, label]) => (
-                    <button key={value} onClick={() => setForm(f => ({ ...f, focusArea: value }))}
-                      className={`px-3 py-2.5 rounded-xl border text-sm font-medium text-left transition-colors
-                        ${form.focusArea === value
-                          ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-                          : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-800 bg-white'}`}>
-                      {label}
-                    </button>
-                  ))}
-                </div>
+          <div className="card p-5 space-y-5">
+            {existingNote && (
+              <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-200
+                text-indigo-600 text-xs px-3 py-2.5 rounded-xl">
+                <span>✓</span> Coaching note exists — editing will update it.
               </div>
+            )}
 
-              {/* Observation */}
-              <div>
-                <label className="label mb-1.5 block">Observation</label>
-                <p className="text-gray-400 text-xs mb-2">What specific behavior or outcome did you observe?</p>
-                <textarea
-                  rows={4}
-                  value={form.observation}
-                  onChange={e => setForm(f => ({ ...f, observation: e.target.value }))}
-                  placeholder="Describe what you saw on the floor today…"
-                  className="input resize-none leading-relaxed"
-                />
-              </div>
-
-              {/* Agreed actions */}
-              <div>
-                <label className="label mb-1.5 block">Agreed actions</label>
-                <p className="text-gray-400 text-xs mb-2">What did you both commit to going forward?</p>
-                <textarea
-                  rows={4}
-                  value={form.agreedActions}
-                  onChange={e => setForm(f => ({ ...f, agreedActions: e.target.value }))}
-                  placeholder="e.g. Rep will run a 5-minute team huddle each morning…"
-                  className="input resize-none leading-relaxed"
-                />
-              </div>
-
-              {/* Follow-up date */}
-              <div>
-                <label className="label mb-1.5 block">
-                  Follow-up date{' '}
-                  <span className="text-gray-400 normal-case font-normal">(optional)</span>
-                </label>
-                <input
-                  type="date"
-                  value={form.followUpDate}
-                  onChange={e => setForm(f => ({ ...f, followUpDate: e.target.value }))}
-                  className="input max-w-xs"
-                />
-              </div>
-
-              {error && (
-                <div className="flex items-center gap-2 bg-red-50 border border-red-200
-                  text-red-600 text-xs px-3 py-2.5 rounded-xl">
-                  <span>⚠</span> {error}
-                </div>
-              )}
-
-              <div className="flex gap-3">
-                <button onClick={save} disabled={saving}
-                  className={`btn-primary max-w-xs ${saved ? '!bg-blue-600' : ''}`}>
-                  {saving ? 'Saving…' : saved ? '✓ Saved' : existingNote ? 'Update note' : 'Save coaching note'}
-                </button>
+            {/* Focus area */}
+            <div>
+              <label className="label mb-2 block">Focus area</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {FOCUS_OPTIONS.map(([value, label]) => (
+                  <button key={value} onClick={() => setForm(f => ({ ...f, focusArea: value }))}
+                    className={`px-3 py-2.5 rounded-xl border text-sm font-medium text-left transition-colors
+                      ${form.focusArea === value
+                        ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-800 bg-white'}`}>
+                    {label}
+                  </button>
+                ))}
               </div>
             </div>
-          )}
+
+            {/* Observation */}
+            <div>
+              <label className="label mb-1.5 block">Observation</label>
+              <p className="text-gray-400 text-xs mb-2">What specific behavior or outcome did you observe?</p>
+              <textarea
+                rows={4}
+                value={form.observation}
+                onChange={e => setForm(f => ({ ...f, observation: e.target.value }))}
+                placeholder="Describe what you saw on the floor today…"
+                className="input resize-none leading-relaxed"
+              />
+            </div>
+
+            {/* Agreed actions */}
+            <div>
+              <label className="label mb-1.5 block">Agreed actions</label>
+              <p className="text-gray-400 text-xs mb-2">What did you both commit to going forward?</p>
+              <textarea
+                rows={4}
+                value={form.agreedActions}
+                onChange={e => setForm(f => ({ ...f, agreedActions: e.target.value }))}
+                placeholder="e.g. Rep will run a 5-minute team huddle each morning…"
+                className="input resize-none leading-relaxed"
+              />
+            </div>
+
+            {/* Follow-up date */}
+            <div>
+              <label className="label mb-1.5 block">
+                Follow-up date{' '}
+                <span className="text-gray-400 normal-case font-normal">(optional)</span>
+              </label>
+              <input
+                type="date"
+                value={form.followUpDate}
+                onChange={e => setForm(f => ({ ...f, followUpDate: e.target.value }))}
+                className="input max-w-xs"
+              />
+            </div>
+
+            {error && (
+              <div className="flex items-center gap-2 bg-red-50 border border-red-200
+                text-red-600 text-xs px-3 py-2.5 rounded-xl">
+                <span>⚠</span> {error}
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <button onClick={save} disabled={saving}
+                className={`btn-primary max-w-xs ${saved ? '!bg-blue-600' : ''}`}>
+                {saving ? 'Saving…' : saved ? '✓ Saved' : existingNote ? 'Update note' : 'Save coaching note'}
+              </button>
+            </div>
+          </div>
         </div>
       ) : (
         // History tab

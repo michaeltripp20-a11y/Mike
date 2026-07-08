@@ -82,4 +82,30 @@ for (const sql of migrations) {
   try { sqlite.exec(sql) } catch { /* already applied */ }
 }
 
+// Make coaching_notes.day_id nullable (SQLite requires table recreation)
+try {
+  const hasV2 = sqlite.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='coaching_notes_v2'").get()
+  if (!hasV2) {
+    sqlite.exec(`
+      CREATE TABLE coaching_notes_v2 (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        day_id INTEGER,
+        manager_id INTEGER NOT NULL,
+        leader_id INTEGER NOT NULL,
+        focus_area TEXT NOT NULL,
+        observation TEXT NOT NULL,
+        agreed_actions TEXT NOT NULL,
+        follow_up_date TEXT,
+        follow_up_status TEXT DEFAULT 'pending',
+        follow_up_resolution TEXT,
+        resolved_at INTEGER,
+        created_at INTEGER NOT NULL
+      );
+      INSERT INTO coaching_notes_v2 SELECT * FROM coaching_notes;
+      DROP TABLE coaching_notes;
+      ALTER TABLE coaching_notes_v2 RENAME TO coaching_notes;
+    `)
+  }
+} catch (e) { console.error('[migration] coaching_notes nullable day_id:', e) }
+
 export type DB = typeof db

@@ -38,7 +38,7 @@ export const commitments = sqliteTable('commitments', {
 
 export const coachingNotes = sqliteTable('coaching_notes', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  dayId: integer('day_id').notNull(),
+  dayId: integer('day_id'),
   managerId: integer('manager_id').notNull(),
   leaderId: integer('leader_id').notNull(),
   focusArea: text('focus_area').notNull(),

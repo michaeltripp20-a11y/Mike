@@ -12,15 +12,8 @@ router.use(requireAuth)
 router.post('/', requireManager, (req, res) => {
   const { dayId, leaderId, focusArea, observation, agreedActions, followUpDate } = req.body ?? {}
 
-  if (!dayId || !leaderId || !focusArea || !observation || !agreedActions) {
-    res.status(400).json({ error: 'dayId, leaderId, focusArea, observation, and agreedActions are required' })
-    return
-  }
-
-  // Verify the day belongs to the leader and both are in the manager's district
-  const day = db.select().from(days).where(and(eq(days.id, dayId), eq(days.userId, leaderId))).get()
-  if (!day) {
-    res.status(404).json({ error: 'Day not found for that leader' })
+  if (!leaderId || !focusArea || !observation || !agreedActions) {
+    res.status(400).json({ error: 'leaderId, focusArea, observation, and agreedActions are required' })
     return
   }
 
@@ -30,9 +23,18 @@ router.post('/', requireManager, (req, res) => {
     return
   }
 
-  // Upsert — one coaching note per day
+  let day: typeof import('../db/schema').days.$inferSelect | undefined
+  if (dayId) {
+    day = db.select().from(days).where(and(eq(days.id, dayId), eq(days.userId, leaderId))).get()
+    if (!day) {
+      res.status(404).json({ error: 'Day not found for that leader' })
+      return
+    }
+  }
+
+  // Upsert — one coaching note per day (or standalone if no day)
   const manager = db.select().from(users).where(eq(users.id, req.jwtPayload.userId)).get()
-  const dayDate = day.date
+  const dayDate = day?.date ?? new Date().toISOString().slice(0, 10)
 
   async function fireEmail(note: typeof coachingNotes.$inferSelect) {
     if (!leader || !manager) return
@@ -49,7 +51,9 @@ router.post('/', requireManager, (req, res) => {
     }).catch(err => console.error('[email] Failed to send coaching email:', err))
   }
 
-  const existing = db.select().from(coachingNotes).where(eq(coachingNotes.dayId, dayId)).get()
+  const existing = dayId
+    ? db.select().from(coachingNotes).where(eq(coachingNotes.dayId, dayId)).get()
+    : undefined
   if (existing) {
     const [updated] = db.update(coachingNotes)
       .set({ focusArea, observation, agreedActions, followUpDate: followUpDate ?? null })
