@@ -135,7 +135,7 @@ export interface LeaderDay {
 
 export const coachingApi = {
   create: (body: {
-    dayId: number; leaderId: number; focusArea: string
+    dayId?: number; leaderId: number; focusArea: string
     observation: string; agreedActions: string; followUpDate?: string
   }) => api.post<CoachingNote>('/coaching', body),
 
