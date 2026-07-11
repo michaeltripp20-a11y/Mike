@@ -5,6 +5,7 @@ import { db } from '../db'
 import { users } from '../db/schema'
 import { eq } from 'drizzle-orm'
 import { JWT_SECRET, requireAuth } from '../middleware/auth'
+import { sendWelcomeEmail } from '../email'
 
 const router = Router()
 
@@ -24,7 +25,7 @@ function formatUser(user: typeof users.$inferSelect) {
 }
 
 router.post('/register', async (req, res) => {
-  const { name, email, password, role = 'leader', storeId = 1 } = req.body ?? {}
+  const { name, email, password, role = 'leader', storeId = 1, addedByManagerId } = req.body ?? {}
   if (!name || !email || !password) {
     res.status(400).json({ error: 'name, email, and password are required' })
     return
@@ -37,6 +38,15 @@ router.post('/register', async (req, res) => {
   const passwordHash = await bcrypt.hash(password, 10)
   const [user] = db.insert(users).values({ name, email, passwordHash, role, storeId, createdAt: new Date() }).returning().all()
   const token = makeToken(user.id, user.role, user.storeId)
+
+  if (role === 'leader' && addedByManagerId) {
+    const manager = db.select().from(users).where(eq(users.id, addedByManagerId)).get()
+    if (manager) {
+      sendWelcomeEmail({ repName: name, repEmail: email, managerName: manager.name, tempPassword: password })
+        .catch(err => console.error('[email] Welcome email failed:', err))
+    }
+  }
+
   res.status(201).json({ token, user: formatUser(user) })
 })
 

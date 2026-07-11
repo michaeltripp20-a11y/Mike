@@ -46,7 +46,7 @@ export default function TeamBoard() {
     setAddLoading(true)
     const password = Math.random().toString(36).slice(2, 10)
     try {
-      await authApi.register({ ...addForm, password, role: 'leader', storeId: user?.storeId ?? 1 })
+      await authApi.register({ ...addForm, password, role: 'leader', storeId: user?.storeId ?? 1, addedByManagerId: user?.id })
       setAddForm({ name: '', email: '' })
       setCreatedPassword(password)
       teamApi.board().then(setMembers)

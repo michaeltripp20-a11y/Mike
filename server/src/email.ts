@@ -93,6 +93,58 @@ function emailHtml(data: CoachingEmailData, forRep: boolean) {
 </html>`
 }
 
+export async function sendWelcomeEmail(data: { repName: string; repEmail: string; managerName: string; tempPassword: string }) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.log('[email] SMTP not configured — skipping welcome email')
+    return
+  }
+
+  const from = process.env.SMTP_FROM
+    ? `FloorTracker <${process.env.SMTP_FROM}>`
+    : `FloorTracker <${process.env.SMTP_USER}>`
+
+  const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="max-width:560px;margin:40px auto;padding:0 16px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px">
+      <div style="width:32px;height:32px;background:#4f46e5;border-radius:8px;display:flex;align-items:center;justify-content:center">
+        <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M2 10L5.5 6L8 8.5L12 3.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span style="font-weight:700;font-size:16px;color:#111827">FloorTracker</span>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:32px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <p style="margin:0 0 4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af">Welcome</p>
+      <h1 style="margin:0 0 20px;font-size:22px;font-weight:700;color:#111827">Hi ${data.repName} 👋</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#374151;line-height:1.6">
+        ${data.managerName} has added you to <strong>FloorTracker</strong>. Here are your login credentials:
+      </p>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:24px;font-family:monospace">
+        <p style="margin:0 0 8px;font-size:13px;color:#6b7280">Email</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#111827;font-weight:600">${data.repEmail}</p>
+        <p style="margin:0 0 8px;font-size:13px;color:#6b7280">Temporary Password</p>
+        <p style="margin:0;font-size:18px;color:#4f46e5;font-weight:700;letter-spacing:.1em">${data.tempPassword}</p>
+      </div>
+      <p style="margin:0;font-size:13px;color:#6b7280;line-height:1.6">
+        Sign in at your store's FloorTracker link. You can update your password after logging in.
+      </p>
+    </div>
+    <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:24px">FloorTracker · You were added by ${data.managerName}</p>
+  </div>
+</body>
+</html>`
+
+  await transporter.sendMail({
+    from,
+    to: data.repEmail,
+    subject: `You've been added to FloorTracker`,
+    html,
+  })
+
+  console.log(`[email] Sent welcome email to ${data.repEmail}`)
+}
+
 export async function sendCoachingEmails(data: CoachingEmailData) {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.log('[email] SMTP_USER/SMTP_PASS not set — skipping email send')

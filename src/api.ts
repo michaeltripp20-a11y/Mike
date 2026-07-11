@@ -32,7 +32,7 @@ export interface AuthPayload { token: string; user: User }
 export interface User { id: number; name: string; email: string; role: 'leader' | 'manager'; storeId: number; leaderType: string | null }
 
 export const authApi = {
-  register: (body: { name: string; email: string; password: string; role: 'leader' | 'manager'; storeId: number }) =>
+  register: (body: { name: string; email: string; password: string; role: 'leader' | 'manager'; storeId: number; addedByManagerId?: number }) =>
     api.post<AuthPayload>('/auth/register', body),
   login: (body: { email: string; password: string }) =>
     api.post<AuthPayload>('/auth/login', body),
