@@ -2,15 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import {
   coachingApi,
-  type CoachingNote, type LeaderDay, type CoachingNoteWithDay,
+  type CoachingNote, type CoachingNoteWithDay,
 } from '../api'
 import { getValues, LEADER_TYPES } from '../constants/leaderTypes'
 
 const OUTCOME_COLOR: Record<string, string> = {
   hit: 'text-blue-600', partial: 'text-amber-600', miss: 'text-red-500',
-}
-const OUTCOME_DOT: Record<string, string> = {
-  hit: 'bg-blue-500', partial: 'bg-amber-400', miss: 'bg-red-500',
 }
 
 type Tab = 'log' | 'history'
@@ -27,9 +24,7 @@ export default function CoachingForm() {
   const focusValues = getValues(leaderType)
   const FOCUS_OPTIONS = Object.entries(focusValues) as [string, string][]
   const [tab, setTab] = useState<Tab>('log')
-  const [leaderDays, setLeaderDays] = useState<LeaderDay[]>([])
   const [history, setHistory] = useState<CoachingNoteWithDay[]>([])
-  const [selectedDayId, setSelectedDayId] = useState<number | null>(null)
   const [existingNote, setExistingNote] = useState<CoachingNote | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -45,33 +40,10 @@ export default function CoachingForm() {
   })
 
   useEffect(() => {
-    Promise.all([
-      coachingApi.leaderDays(leaderId),
-      coachingApi.forLeader(leaderId),
-    ]).then(([days, notes]) => {
-      setLeaderDays(days)
-      setHistory(notes)
-      if (days.length) setSelectedDayId(days[0].id)
-      // Pull leader name from first note or day fetch — derive from history or days
-      }).finally(() => setLoading(false))
+    coachingApi.forLeader(leaderId)
+      .then(notes => setHistory(notes))
+      .finally(() => setLoading(false))
   }, [leaderId])
-
-  useEffect(() => {
-    if (!selectedDayId) return
-    setExistingNote(null)
-    setForm({ focusArea: '', observation: '', agreedActions: '', followUpDate: '' })
-    coachingApi.forDay(selectedDayId)
-      .then(note => {
-        setExistingNote(note)
-        setForm({
-          focusArea: note.focusArea,
-          observation: note.observation,
-          agreedActions: note.agreedActions,
-          followUpDate: note.followUpDate ?? '',
-        })
-      })
-      .catch(() => {})
-  }, [selectedDayId])
 
   async function save() {
     if (!form.focusArea || !form.observation || !form.agreedActions) {
@@ -82,7 +54,6 @@ export default function CoachingForm() {
     setSaving(true)
     try {
       const note = await coachingApi.create({
-        dayId: selectedDayId ?? undefined,
         leaderId,
         focusArea: form.focusArea,
         observation: form.observation,
@@ -92,11 +63,7 @@ export default function CoachingForm() {
       setExistingNote(note)
       setSaved(true)
       setTimeout(() => setSaved(false), 2500)
-      const [days, notes] = await Promise.all([
-        coachingApi.leaderDays(leaderId),
-        coachingApi.forLeader(leaderId),
-      ])
-      setLeaderDays(days)
+      const notes = await coachingApi.forLeader(leaderId)
       setHistory(notes)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error saving')
@@ -148,52 +115,6 @@ export default function CoachingForm() {
 
       {tab === 'log' ? (
         <div className="space-y-5">
-
-          {/* Day picker */}
-          <div className="card p-5">
-            <label className="label mb-3 block">Select a day to review</label>
-            {leaderDays.length === 0 ? (
-              <p className="text-gray-400 text-sm">No days logged yet.</p>
-            ) : (
-              <div className="space-y-1.5">
-                {leaderDays.map(d => (
-                  <button key={d.id} onClick={() => setSelectedDayId(d.id)}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border
-                      text-sm transition-colors text-left
-                      ${selectedDayId === d.id
-                        ? 'border-indigo-300 bg-indigo-50 text-gray-900'
-                        : 'border-gray-200 hover:border-gray-300 text-gray-600 bg-white'}`}>
-                    <div className="flex items-center gap-3">
-                      {d.overallOutcome ? (
-                        <span className={`w-2 h-2 rounded-full shrink-0 ${OUTCOME_DOT[d.overallOutcome]}`} />
-                      ) : (
-                        <span className="w-2 h-2 rounded-full shrink-0 bg-gray-300" />
-                      )}
-                      <span className="font-medium">
-                        {new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', {
-                          weekday: 'short', month: 'short', day: 'numeric',
-                        })}
-                      </span>
-                      {d.overallOutcome && (
-                        <span className={`capitalize text-xs ${OUTCOME_COLOR[d.overallOutcome]}`}>
-                          {d.overallOutcome}
-                        </span>
-                      )}
-                      {d.status !== 'closed' && (
-                        <span className="text-xs text-gray-400 capitalize">{d.status}</span>
-                      )}
-                    </div>
-                    {d.hasCoaching && (
-                      <span className="text-[10px] bg-indigo-50 border border-indigo-200
-                        text-indigo-600 px-2 py-0.5 rounded-full font-semibold">
-                        Coached
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
 
           <div className="card p-5 space-y-5">
             {existingNote && (
