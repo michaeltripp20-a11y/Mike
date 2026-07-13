@@ -25,6 +25,8 @@ export interface PlatformMeta {
   label: string
   color: string
   charLimit: number
+  /** True once this platform's publish() calls a real API instead of simulating. */
+  live: boolean
 }
 
 export interface PlatformConnection {

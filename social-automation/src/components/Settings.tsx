@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { ConnectionMap, Platform } from '../types'
 import { PLATFORMS } from '../data'
 import { Card } from './shared'
@@ -7,17 +8,77 @@ interface SettingsProps {
   onChange: (platform: Platform, patch: Partial<ConnectionMap[Platform]>) => void
 }
 
+interface LiveStatus {
+  connected: boolean
+  name?: string
+  error?: string
+  checking: boolean
+}
+
+function LivePlatformCard({ label, color }: { label: string; color: string }) {
+  const [status, setStatus] = useState<LiveStatus>({ connected: false, checking: true })
+
+  const check = async () => {
+    setStatus(s => ({ ...s, checking: true }))
+    try {
+      const res = await fetch('/api/publish/linkedin')
+      const data = await res.json()
+      setStatus({ connected: Boolean(data.connected), name: data.name, error: data.error, checking: false })
+    } catch {
+      setStatus({
+        connected: false,
+        error: 'No /api routes available here — run with "vercel dev" or deploy to Vercel.',
+        checking: false,
+      })
+    }
+  }
+
+  useEffect(() => { check() }, [])
+
+  return (
+    <div className="border border-gray-800 rounded-lg p-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="font-medium text-white flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full inline-block" style={{ background: color }} />
+          {label}
+          <span className="text-[10px] uppercase tracking-wider font-semibold text-emerald-400 bg-emerald-900/40 rounded-full px-1.5 py-0.5">Live</span>
+        </span>
+        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${status.connected ? 'bg-emerald-900/50 text-emerald-400' : 'bg-gray-800 text-gray-500'}`}>
+          {status.checking ? 'Checking…' : status.connected ? `Connected as ${status.name}` : 'Not connected'}
+        </span>
+      </div>
+      {status.error && <p className="text-red-400 text-xs mb-2">{status.error}</p>}
+      <div className="flex items-center justify-between">
+        <p className="text-gray-500 text-xs">
+          Credentials are set server-side via environment variables, not here — see{' '}
+          <code className="text-gray-400">scripts/linkedin-auth.mjs</code> in the repo.
+        </p>
+        <button
+          onClick={check}
+          className="text-xs px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 hover:bg-gray-700 shrink-0 ml-3"
+        >
+          Recheck
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export function Settings({ connections, onChange }: SettingsProps) {
   return (
     <div className="max-w-2xl space-y-4">
       <Card>
         <h2 className="text-white font-semibold text-lg mb-1">Platform Connections</h2>
         <p className="text-gray-500 text-sm mb-4">
-          Tokens entered here are stored only in this browser's local storage for demo purposes — they
-          are not sent anywhere. A real deployment should hold these server-side and never in client code.
+          Tokens entered below are stored only in this browser's local storage for demo purposes — they
+          are not sent anywhere and don't actually publish. Platforms marked "Live" post for real using
+          credentials held server-side instead.
         </p>
         <div className="space-y-3">
           {PLATFORMS.map(pl => {
+            if (pl.live) {
+              return <LivePlatformCard key={pl.id} label={pl.label} color={pl.color} />
+            }
             const conn = connections[pl.id]
             return (
               <div key={pl.id} className="border border-gray-800 rounded-lg p-4">
@@ -54,12 +115,12 @@ export function Settings({ connections, onChange }: SettingsProps) {
       <Card>
         <h2 className="text-white font-semibold text-lg mb-2">How auto-posting works here</h2>
         <p className="text-gray-400 text-sm leading-relaxed">
-          This app is a client-side scheduler and content queue. While the Queue tab is open, it checks
-          every few seconds for posts whose scheduled time has passed and "publishes" them through a
-          simulated adapter per platform (see <code className="text-gray-300">src/platforms/</code>).
-          Real publishing needs two things this static app doesn't have: (1) real OAuth tokens for each
-          platform's API, and (2) a server-side worker or cron job to fire scheduled posts even when no
-          browser tab is open. See the README for what to add.
+          LinkedIn now publishes for real through <code className="text-gray-300">api/publish/linkedin.ts</code>.
+          Every other platform is still a simulated adapter (see <code className="text-gray-300">src/platforms/</code>)
+          for content planning and UI testing. While the Queue tab is open, the app checks every few
+          seconds for posts whose scheduled time has passed and fires them through whichever adapter —
+          real or simulated — that platform has. Unattended scheduling (posts firing with no browser tab
+          open) still needs a server-side cron and a shared datastore for posts; see README.md.
         </p>
       </Card>
     </div>

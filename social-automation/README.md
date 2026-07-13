@@ -28,40 +28,65 @@ in this MVP.
 
 ## What's real vs. simulated
 
-Everything here is real except the actual network call to each social
-platform's API — that part is intentionally stubbed out. `src/platforms/`
-has one file per platform (`twitter.ts`, `instagram.ts`, `linkedin.ts`,
-`tiktok.ts`, `facebook.ts`), each exporting a `publish(post)` function that
-simulates latency and occasional failure instead of calling a real API.
-Each file has a comment describing exactly what the real integration
-requires (endpoint, auth flow, gotchas).
+**LinkedIn is live.** `src/platforms/linkedin.ts` calls a real serverless
+function (`api/publish/linkedin.ts`) that posts to LinkedIn's API using a
+real OAuth token — see "LinkedIn setup" below.
+
+Every other platform (`twitter.ts`, `instagram.ts`, `tiktok.ts`,
+`facebook.ts` in `src/platforms/`) is still a simulated adapter: each
+`publish(post)` fakes latency and occasional failure instead of calling a
+real API, with a comment describing exactly what the real integration
+would require (endpoint, auth flow, gotchas) so any of them can be wired
+up the same way LinkedIn was.
 
 While the app is open, `App.tsx` polls every 5 seconds for posts whose
-`scheduledFor` time has passed and fires them through the matching stub.
+`scheduledFor` time has passed and fires them through the matching
+adapter — real for LinkedIn, simulated for the rest.
 
-## Turning this into something that actually posts
+## LinkedIn setup
 
-Two things are missing, both by design (a static frontend can't do either
-safely):
+1. Create an app at https://www.linkedin.com/developers/apps, associated
+   with a LinkedIn Page you administer (LinkedIn requires this even for
+   personal-profile posting).
+2. Under "Products", request **Sign In with LinkedIn using OpenID
+   Connect** and **Share on LinkedIn** — both are self-serve and approve
+   instantly.
+3. Under "Auth", add `http://localhost:8765/callback` as an authorized
+   redirect URL.
+4. Copy the app's Client ID/Secret into a local `.env.local`
+   (see `.env.local.example`; this file is gitignored — never commit it
+   or paste real secrets into chat).
+5. Run the one-time auth helper:
+   ```bash
+   cd social-automation
+   node --env-file=.env.local scripts/linkedin-auth.mjs
+   ```
+   It opens a local callback server, prints a LinkedIn consent URL to
+   visit in a browser, and on approval prints `LINKEDIN_ACCESS_TOKEN` and
+   `LINKEDIN_AUTHOR_URN`.
+6. Put those two values in `.env.local` for local testing, **and** in
+   your Vercel project's Environment Variables for the real deployment.
+   The token expires in ~60 days — rerun step 5 to refresh it.
+7. Test locally with `vercel dev` (not plain `vite dev` — that doesn't
+   serve `/api` routes) or deploy to Vercel, then use Composer/Queue as
+   normal. LinkedIn posts for real; every other platform still simulates.
 
-1. **Real credentials.** Every platform's posting API needs an OAuth token
-   with the right scopes (X API v2, Instagram/Facebook Graph API, LinkedIn
-   UGC Posts API, TikTok Content Posting API — see the comments in
-   `src/platforms/*.ts` for specifics). These tokens must never live in
-   client-side code; a browser can't hold a client secret safely, and most
-   of these APIs don't allow direct browser calls (no permissive CORS).
-2. **A server-side scheduler.** Posts need to fire even when nobody has
-   this tab open. That means a small backend (a cron job, a queue worker,
-   a serverless scheduled function) that reads due posts from a real
-   database and calls each platform's API with the stored token.
+## Turning the rest into something that actually posts
 
-The cleanest path: stand up a minimal backend (e.g. a Node/Express service
-or serverless functions) that exposes `POST /api/posts`,
-`GET /api/posts`, and a scheduled job that replaces the `setInterval` in
-`App.tsx` with a real cron trigger calling the same `publish()` logic
-server-side. Swap `src/storage.ts` for calls to that API instead of
-`localStorage`, and replace each stub in `src/platforms/` with the real
-API call using a token read from server-side secrets.
+The same two things that were missing before are still missing for
+Twitter/Instagram/TikTok/Facebook, by design (a static frontend can't do
+either safely):
+
+1. **Real credentials** per platform — OAuth tokens with the right scopes
+   (see the comments in each `src/platforms/*.ts` file for specifics),
+   held server-side only, following the LinkedIn pattern above.
+2. **A server-side scheduler.** Posts currently only fire while this
+   browser tab is open. Unattended scheduling needs a real datastore
+   (not `localStorage`, which only the browser can see) plus a cron
+   trigger — e.g. Vercel Cron calling a scheduled function that reads due
+   posts from a database and calls each platform's `publish()` logic
+   server-side. `src/storage.ts` would move from `localStorage` calls to
+   calls against that API.
 
 ## Content generation
 

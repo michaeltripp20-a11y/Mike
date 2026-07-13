@@ -1,11 +1,11 @@
 import type { Platform, PlatformMeta, Post } from './types'
 
 export const PLATFORMS: PlatformMeta[] = [
-  { id: 'twitter', label: 'X / Twitter', color: '#1d9bf0', charLimit: 280 },
-  { id: 'instagram', label: 'Instagram', color: '#e1306c', charLimit: 2200 },
-  { id: 'linkedin', label: 'LinkedIn', color: '#0a66c2', charLimit: 3000 },
-  { id: 'tiktok', label: 'TikTok', color: '#fe2c55', charLimit: 2200 },
-  { id: 'facebook', label: 'Facebook', color: '#1877f2', charLimit: 63206 },
+  { id: 'twitter', label: 'X / Twitter', color: '#1d9bf0', charLimit: 280, live: false },
+  { id: 'instagram', label: 'Instagram', color: '#e1306c', charLimit: 2200, live: false },
+  { id: 'linkedin', label: 'LinkedIn', color: '#0a66c2', charLimit: 3000, live: true },
+  { id: 'tiktok', label: 'TikTok', color: '#fe2c55', charLimit: 2200, live: false },
+  { id: 'facebook', label: 'Facebook', color: '#1877f2', charLimit: 63206, live: false },
 ]
 
 export function platformMeta(id: Platform): PlatformMeta {
