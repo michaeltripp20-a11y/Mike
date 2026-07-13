@@ -23,14 +23,20 @@ npm run dev
 - **Dashboard** — engagement chart, platform mix, upcoming posts.
 - **Settings** — per-platform token fields and connection status.
 
-Posts and connection tokens persist to `localStorage` — there's no backend
-in this MVP.
+Posts live in a shared Upstash Redis store via `api/posts/*` so scheduled
+posts can fire from a real cron job with no browser open — see "Persistent
+scheduling" below. If that backend isn't reachable (plain `vite dev`, or
+Upstash isn't configured yet), the app falls back to a local-only
+**Preview** mode — a yellow banner and header badge make it obvious which
+mode you're in. Platform connection tokens for the still-simulated
+platforms stay in `localStorage` either way (demo only, never sent
+anywhere).
 
 ## What's real vs. simulated
 
-**LinkedIn is live.** `src/platforms/linkedin.ts` calls a real serverless
-function (`api/publish/linkedin.ts`) that posts to LinkedIn's API using a
-real OAuth token — see "LinkedIn setup" below.
+**LinkedIn is live.** `src/platforms/linkedin.ts` (browser) and
+`api/_lib/linkedin.ts` (server, used by the cron job) both call LinkedIn's
+real API using a real OAuth token — see "LinkedIn setup" below.
 
 Every other platform (`twitter.ts`, `instagram.ts`, `tiktok.ts`,
 `facebook.ts` in `src/platforms/`) is still a simulated adapter: each
@@ -39,9 +45,12 @@ real API, with a comment describing exactly what the real integration
 would require (endpoint, auth flow, gotchas) so any of them can be wired
 up the same way LinkedIn was.
 
-While the app is open, `App.tsx` polls every 5 seconds for posts whose
-`scheduledFor` time has passed and fires them through the matching
-adapter — real for LinkedIn, simulated for the rest.
+In **live** mode, `api/cron/publish-due.ts` — triggered by Vercel Cron,
+not this browser tab — checks for posts whose `scheduledFor` time has
+passed and fires them through the matching adapter (real for LinkedIn,
+simulated for the rest), independent of whether anyone has the app open.
+In **preview** mode there is no cron, so `App.tsx` simulates one
+client-side every 5 seconds purely to keep the demo interactive.
 
 ## LinkedIn setup
 
@@ -71,22 +80,42 @@ adapter — real for LinkedIn, simulated for the rest.
    serve `/api` routes) or deploy to Vercel, then use Composer/Queue as
    normal. LinkedIn posts for real; every other platform still simulates.
 
+## Persistent scheduling (Upstash + Vercel Cron)
+
+1. Create a free Redis database at https://console.upstash.com, then copy
+   its REST URL and token from the dashboard into `.env.local`:
+   ```
+   UPSTASH_REDIS_REST_URL=...
+   UPSTASH_REDIS_REST_TOKEN=...
+   ```
+2. Generate a random `CRON_SECRET` (a command for this is in
+   `.env.local.example`) and add it to `.env.local` too. This stops
+   strangers from hitting `/api/cron/publish-due` and firing your queue.
+3. Add all of `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, and
+   `CRON_SECRET` to your Vercel project's Environment Variables (same
+   values as `.env.local`) before deploying.
+4. `vercel.json` already defines the cron schedule
+   (`/api/cron/publish-due` every 5 minutes). **Vercel's free Hobby plan
+   only runs cron jobs once a day**, regardless of what the schedule
+   says — 5-minute granularity needs a Pro plan. If you're on Hobby and
+   want tighter timing, point an external pinger (e.g. cron-job.org or a
+   scheduled GitHub Actions workflow) at
+   `https://<your-app>.vercel.app/api/cron/publish-due` with header
+   `Authorization: Bearer <CRON_SECRET>` instead of relying on
+   `vercel.json`.
+5. Once deployed, the header badge switches from "Preview" to "Live
+   queue" and posts persist across devices/browsers, not just this one.
+
 ## Turning the rest into something that actually posts
 
-The same two things that were missing before are still missing for
-Twitter/Instagram/TikTok/Facebook, by design (a static frontend can't do
-either safely):
-
-1. **Real credentials** per platform — OAuth tokens with the right scopes
-   (see the comments in each `src/platforms/*.ts` file for specifics),
-   held server-side only, following the LinkedIn pattern above.
-2. **A server-side scheduler.** Posts currently only fire while this
-   browser tab is open. Unattended scheduling needs a real datastore
-   (not `localStorage`, which only the browser can see) plus a cron
-   trigger — e.g. Vercel Cron calling a scheduled function that reads due
-   posts from a database and calls each platform's `publish()` logic
-   server-side. `src/storage.ts` would move from `localStorage` calls to
-   calls against that API.
+Twitter/Instagram/TikTok/Facebook still need real OAuth credentials with
+the right scopes (see the comments in each `src/platforms/*.ts` file for
+specifics), held server-side only. Follow the LinkedIn pattern above:
+add an `api/_lib/<platform>.ts` with the real API call, an
+`api/publish/<platform>.ts` HTTP wrapper for the browser's manual
+"Publish now" button, wire it into `api/_lib/publishers.ts`'s switch
+statement for the cron job, and flip that platform's `live` flag to
+`true` in `src/data.ts`.
 
 ## Content generation
 
