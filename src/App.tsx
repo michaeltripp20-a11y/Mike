@@ -171,7 +171,7 @@ function About() {
           <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">About</p>
           <h2 className="text-4xl font-bold text-white leading-tight mb-6">Execution over motivation.</h2>
           <p className="text-gray-400 leading-relaxed mb-4">
-            I'm M Tripp — District Manager, retail leader, and founder of The Floor Report. I've led 19 stores and 60 reps across Arkansas, and I've learned that most leadership content is built for people who've never closed a store on a Saturday night.
+            I'm Michael Tripp — District Manager, retail leader, and founder of The Floor Report. I've led 19 stores and 60 reps across Arkansas, and I've learned that most leadership content is built for people who've never closed a store on a Saturday night.
           </p>
           <p className="text-gray-400 leading-relaxed">
             So I built something different. The Floor Report is a newsletter for the managers actually running the floor. And on LinkedIn as mtripp76, I post the kind of content that gets shared in manager group chats, not boardroom decks.
