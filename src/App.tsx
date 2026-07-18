@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 /* ─── Data ──────────────────────────────────────────────────────────────── */
 
-const NAV_LINKS = ['About', 'Experience', 'Writing', 'Newsletter', 'Contact']
+const NAV_LINKS = ['About', 'Experience', 'Speaking', 'Writing', 'Newsletter', 'Contact']
 
 const EXPERIENCE = [
   {
@@ -220,6 +220,53 @@ function Experience() {
   )
 }
 
+const SERVICES = [
+  {
+    title: 'Keynotes',
+    desc: 'High-energy talks on retail leadership, execution, and building teams that perform — for conferences, kickoffs, and company events.',
+  },
+  {
+    title: 'Leadership Retreats',
+    desc: 'Facilitated sessions that get your leadership team aligned on standards, accountability, and how work actually gets done on the floor.',
+  },
+  {
+    title: 'Team Workshops',
+    desc: 'Hands-on training for store and district managers — practical frameworks your team can put to work the next shift.',
+  },
+  {
+    title: 'Individual Coaching',
+    desc: 'One-on-one coaching for retail leaders who want to level up — from running a store to running a district and beyond.',
+  },
+]
+
+function Speaking({ onNav }: { onNav: (s: string) => void }) {
+  return (
+    <section id="Speaking" className="py-24 px-6 border-t border-gray-800">
+      <div className="max-w-5xl mx-auto">
+        <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">Speaking & Coaching</p>
+        <h2 className="text-4xl font-bold text-white mb-4">Work with me.</h2>
+        <p className="text-gray-400 leading-relaxed max-w-2xl mb-12">
+          I'm available for keynotes, leadership retreats, team workshops, and individual coaching — built on real floor experience, not theory.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-4 mb-10">
+          {SERVICES.map(s => (
+            <div key={s.title} className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-gray-600 transition-colors">
+              <div className="text-white font-semibold mb-2">{s.title}</div>
+              <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={() => onNav('Contact')}
+          className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+        >
+          Book me <IconArrow />
+        </button>
+      </div>
+    </section>
+  )
+}
+
 const WRITING_TOPICS = [
   {
     title: 'Frontline Leadership',
@@ -353,7 +400,7 @@ function Contact() {
           <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">Contact</p>
           <h2 className="text-4xl font-bold text-white mb-6">Let's talk.</h2>
           <p className="text-gray-400 leading-relaxed mb-8">
-            Reach out about The Floor Report, speaking, retail leadership, or anything else worth talking about.
+            Reach out about keynotes, leadership retreats, team workshops, individual coaching, The Floor Report, or anything else worth talking about.
           </p>
           <div className="flex flex-col gap-4">
             <a href="mailto:michael@thetrippgroup.com" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
@@ -427,7 +474,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    const sections = ['About', 'Experience', 'Writing', 'Newsletter', 'Contact']
+    const sections = ['About', 'Experience', 'Speaking', 'Writing', 'Newsletter', 'Contact']
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(e => { if (e.isIntersecting) setActiveNav(e.target.id) })
@@ -444,6 +491,7 @@ export default function App() {
       <Hero onNav={scrollTo} />
       <About />
       <Experience />
+      <Speaking onNav={scrollTo} />
       <Writing />
       <Newsletter />
       <Contact />
