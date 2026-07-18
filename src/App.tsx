@@ -127,12 +127,12 @@ function Hero({ onNav }: { onNav: (s: string) => void }) {
 
         <div className="mt-10 flex flex-wrap gap-4 animate-fade-up delay-300">
           <a
-            href="https://thefloorreport.substack.com"
+            href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7472105417490333696"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
           >
-            Read The Floor Report <IconArrow />
+            Subscribe on LinkedIn <IconArrow />
           </a>
           <button
             onClick={() => onNav('Contact')}
@@ -279,12 +279,12 @@ function Newsletter() {
             ))}
           </ul>
           <a
-            href="https://thefloorreport.substack.com"
+            href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7472105417490333696"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
           >
-            Read The Floor Report <IconArrow />
+            Subscribe on LinkedIn <IconArrow />
           </a>
         </div>
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
@@ -296,7 +296,7 @@ function Newsletter() {
             ].map(item => (
               <a
                 key={item.title}
-                href="https://thefloorreport.substack.com"
+                href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7472105417490333696"
                 target="_blank"
                 rel="noreferrer"
                 className="block group"
@@ -391,7 +391,7 @@ function Footer() {
         <div className="flex items-center gap-5 text-gray-500">
           <a href="https://www.linkedin.com/in/mtripp76" target="_blank" rel="noreferrer" className="hover:text-white transition-colors" aria-label="LinkedIn"><IconLinkedIn /></a>
           <a href="mailto:michael@thetrippgroup.com" className="hover:text-white transition-colors" aria-label="Email"><IconMail /></a>
-          <a href="https://thefloorreport.substack.com" target="_blank" rel="noreferrer" className="text-sm hover:text-white transition-colors">The Floor Report</a>
+          <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7472105417490333696" target="_blank" rel="noreferrer" className="text-sm hover:text-white transition-colors">The Floor Report</a>
         </div>
       </div>
     </footer>
