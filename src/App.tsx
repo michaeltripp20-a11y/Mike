@@ -113,7 +113,7 @@ function Hero({ onNav }: { onNav: (s: string) => void }) {
         {/* Eyebrow */}
         <div className="inline-flex items-center gap-2 bg-gray-800/60 border border-gray-700 rounded-full px-4 py-1.5 mb-8 animate-fade-up">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="text-sm text-gray-300">District Manager · The Floor Report · @MTRIPP</span>
+          <span className="text-sm text-gray-300">District Manager · The Floor Report · mtripp76</span>
         </div>
 
         <h1 className="text-5xl sm:text-7xl font-extrabold text-white leading-tight tracking-tight animate-fade-up delay-100">
@@ -166,7 +166,7 @@ function About() {
             I'm M Tripp — District Manager, retail leader, and founder of The Floor Report. I've led 19 stores and 60 reps across Arkansas, and I've learned that most leadership content is built for people who've never closed a store on a Saturday night.
           </p>
           <p className="text-gray-400 leading-relaxed">
-            So I built something different. The Floor Report is a newsletter for the managers actually running the floor. And on LinkedIn as @MTRIPP, I post the kind of content that gets shared in manager group chats, not boardroom decks.
+            So I built something different. The Floor Report is a newsletter for the managers actually running the floor. And on LinkedIn as mtripp76, I post the kind of content that gets shared in manager group chats, not boardroom decks.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -342,7 +342,7 @@ function Contact() {
               <IconMail /> michael@thetrippgroup.com
             </a>
             <a href="https://www.linkedin.com/in/mtripp76" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
-              <IconLinkedIn /> @MTRIPP on LinkedIn
+              <IconLinkedIn /> mtripp76 on LinkedIn
             </a>
           </div>
         </div>
