@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 /* ─── Data ──────────────────────────────────────────────────────────────── */
 
-const NAV_LINKS = ['About', 'Experience', 'Newsletter', 'Contact']
+const NAV_LINKS = ['About', 'Experience', 'Writing', 'Newsletter', 'Contact']
 
 const EXPERIENCE = [
   {
@@ -212,6 +212,50 @@ function Experience() {
   )
 }
 
+const WRITING_TOPICS = [
+  {
+    title: 'Frontline Leadership',
+    desc: 'Coaching reps, holding the standard, and leading people who are on their feet all day — without turning into the manager everyone dreads.',
+  },
+  {
+    title: 'Store Execution',
+    desc: 'Resets, planograms, audits, and the unglamorous details that separate stores that look ready from stores that are ready.',
+  },
+  {
+    title: 'Managing Up & Across',
+    desc: 'How to run a district, communicate with corporate, and protect your team from the noise that rolls downhill.',
+  },
+  {
+    title: 'Career Growth in Retail',
+    desc: 'Getting from the floor to the district — and what actually gets people promoted versus what they think does.',
+  },
+]
+
+function Writing() {
+  return (
+    <section id="Writing" className="py-24 px-6 border-t border-gray-800">
+      <div className="max-w-5xl mx-auto">
+        <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-3">Writing</p>
+        <h2 className="text-4xl font-bold text-white mb-12">What I write about.</h2>
+        <div className="grid sm:grid-cols-2 gap-4 mb-16">
+          {WRITING_TOPICS.map(t => (
+            <div key={t.title} className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-gray-600 transition-colors">
+              <div className="text-white font-semibold mb-2">{t.title}</div>
+              <p className="text-gray-400 text-sm leading-relaxed">{t.desc}</p>
+            </div>
+          ))}
+        </div>
+        <blockquote className="border-l-2 border-indigo-400 pl-6 max-w-2xl">
+          <p className="text-xl text-gray-200 leading-relaxed font-medium mb-3">
+            "Your team watches what you reward, not what you say."
+          </p>
+          <cite className="text-sm text-gray-500 not-italic">— The Floor Report, Issue #1</cite>
+        </blockquote>
+      </div>
+    </section>
+  )
+}
+
 function Newsletter() {
   return (
     <section id="Newsletter" className="py-24 px-6 border-t border-gray-800">
@@ -341,8 +385,15 @@ function Contact() {
 
 function Footer() {
   return (
-    <footer className="border-t border-gray-800 py-8 px-6 text-center text-gray-600 text-sm">
-      © {new Date().getFullYear()} Michael Tripp · michaeltripp.com
+    <footer className="border-t border-gray-800 py-10 px-6">
+      <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <span className="text-gray-600 text-sm">© {new Date().getFullYear()} Michael Tripp · michaeltripp.com</span>
+        <div className="flex items-center gap-5 text-gray-500">
+          <a href="https://www.linkedin.com/in/mtripp76" target="_blank" rel="noreferrer" className="hover:text-white transition-colors" aria-label="LinkedIn"><IconLinkedIn /></a>
+          <a href="mailto:michael@thetrippgroup.com" className="hover:text-white transition-colors" aria-label="Email"><IconMail /></a>
+          <a href="https://thefloorreport.substack.com" target="_blank" rel="noreferrer" className="text-sm hover:text-white transition-colors">The Floor Report</a>
+        </div>
+      </div>
     </footer>
   )
 }
@@ -358,7 +409,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    const sections = ['About', 'Experience', 'Newsletter', 'Contact']
+    const sections = ['About', 'Experience', 'Writing', 'Newsletter', 'Contact']
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(e => { if (e.isIntersecting) setActiveNav(e.target.id) })
@@ -375,6 +426,7 @@ export default function App() {
       <Hero onNav={scrollTo} />
       <About />
       <Experience />
+      <Writing />
       <Newsletter />
       <Contact />
       <Footer />
