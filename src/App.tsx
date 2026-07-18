@@ -134,6 +134,14 @@ function Hero({ onNav }: { onNav: (s: string) => void }) {
           >
             Subscribe on LinkedIn <IconArrow />
           </a>
+          <a
+            href="https://thefloorreport.substack.com"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 border border-gray-600 text-white px-6 py-3 rounded-full font-semibold hover:border-gray-400 transition-colors"
+          >
+            Read on Substack
+          </a>
           <button
             onClick={() => onNav('Contact')}
             className="flex items-center gap-2 border border-gray-600 text-white px-6 py-3 rounded-full font-semibold hover:border-gray-400 transition-colors"
@@ -278,14 +286,24 @@ function Newsletter() {
               </li>
             ))}
           </ul>
-          <a
-            href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7472105417490333696"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-          >
-            Subscribe on LinkedIn <IconArrow />
-          </a>
+          <div className="flex flex-wrap gap-4">
+            <a
+              href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7472105417490333696"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Subscribe on LinkedIn <IconArrow />
+            </a>
+            <a
+              href="https://thefloorreport.substack.com"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 border border-gray-600 text-white px-6 py-3 rounded-full font-semibold hover:border-gray-400 transition-colors"
+            >
+              Read on Substack
+            </a>
+          </div>
         </div>
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
           <div className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-6">Latest from the newsletter</div>
