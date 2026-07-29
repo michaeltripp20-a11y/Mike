@@ -145,13 +145,14 @@ export class SubstackClient {
     return res.json() as Promise<SubstackDraft>;
   }
 
-  async publishDraft(draftId: number): Promise<void> {
+  async publishDraft(draftId: number, title?: string): Promise<void> {
     const res = await fetch(`${this.baseUrl}/api/v1/drafts/${draftId}/publish`, {
       method: "POST",
       headers: this.headers(),
       body: JSON.stringify({
         send_email: true,
         share_automatically: false,
+        ...(title ? { draft_title: title } : {}),
       }),
     });
 
@@ -167,7 +168,7 @@ export class SubstackClient {
     console.log(`[substack] Draft created with id=${draft.id}`);
 
     console.log(`[substack] Publishing draft ${draft.id}...`);
-    await this.publishDraft(draft.id);
+    await this.publishDraft(draft.id, payload.title);
     console.log(`[substack] Published successfully.`);
 
     return { draftId: draft.id, title: payload.title };
